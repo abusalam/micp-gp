@@ -1,0 +1,4 @@
+---
+deployment:
+ tasks:
+  - git --work-tree=../../micp checkout -f master

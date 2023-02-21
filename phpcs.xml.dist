@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rulset name="CodeIgniter4">
+    <config name="installed_paths" value="vendor/codeigniter4/codeigniter4-standard/CodeIgniter4"/>
+    <description>CodeIgniter 4 coding standard for PHP_CodeSniffer</description>
+
+    <file>app</file>
+    <file>tests</file>
+
+    <exclude-pattern>*\.(inc|css|js)$</exclude-pattern>
+    <exclude-pattern>*smsclient\.php$</exclude-pattern>
+    <exclude-pattern>*/config/*\.(php|inc|css|js)$</exclude-pattern>
+    <exclude-pattern>*/vendor/*\.(php|inc|css|js)$</exclude-pattern>
+
+    <rule ref="vendor/codeigniter4/codeigniter4-standard/CodeIgniter4/ruleset.xml"/>
+
+    <rule ref="Squiz.Commenting.ClassComment.Missing">
+      <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.Commenting.FunctionComment.Missing">
+      <severity>0</severity>
+    </rule>
+
+    <rule ref="CodeIgniter4.Commenting.FileComment.Missing">
+      <severity>0</severity>
+    </rule>
+
+</rulset>
