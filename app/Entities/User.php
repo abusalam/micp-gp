@@ -18,50 +18,18 @@ class User extends Entity
 		return $this->attributes['full_name'] ?? '';
 	}
 
-	public function getClassId()
-	{
-		return model('UserModel')->getClasses($this->id)[0]['id'] ?? '';
-	}
-
-	public function getClassName()
-	{
-		return model('UserModel')->getClasses($this->id)[0]['class'] ?? '';
-	}
-
-	public function setSchoolId($schoolId)
-	{
-		$this->attributes['school_id'] = $schoolId;
-		return $this;
-	}
-
-	public function getSchoolId()
-	{
-		return $this->attributes['school_id'] ?? '';
-	}
-
-	public function getSchoolName()
-	{
-		return model('UserModel')->getSchool($this->id)[0]['school'] ?? '';
-	}
-
 	public function isProfileUpdateRequired()
 	{
-		if ($this->getSchoolId() === '')
-		{
-			session()->set('has_no_profile', true);
-			session()->set('message', lang('app.profile.hasNoProfile'));
-			return true;
-		}
 
 		$authorize = Services::authorization();
 		if ($authorize->inGroup(env('auth.defaultUserGroup', 'students'), $this->id))
 		{
-			if ($this->getClassId() === '')
-			{
-				session()->set('has_no_profile', true);
-				session()->set('message', lang('app.profile.hasNoClass'));
-				return true;
-			}
+			// if ($this->getClassId() === '')
+			// {
+			// 	session()->set('has_no_profile', true);
+			// 	session()->set('message', lang('app.profile.hasNoClass'));
+			// 	return true;
+			// }
 		}
 		// Required to update session to render routes
 		session()->set('has_no_profile', false);

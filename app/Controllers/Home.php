@@ -65,7 +65,7 @@ class Home extends BaseController
 		(new Fabricator(BookingModel::class))->make():
 		new Booking();
 		$this->response->CSP->addChildSrc('https://www.google.com');
-		return view('Booking/home', $data);
+		return view('home', $data);
 	}
 
 	public function ci()

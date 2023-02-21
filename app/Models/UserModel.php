@@ -1,6 +1,8 @@
 <?php namespace App\Models;
 
 use Myth\Auth\Models\UserModel as Model;
+use Faker\Generator;
+use App\Entities\User;
 
 /**
  * Models provide a way to interact with a specific table in your database.
@@ -81,7 +83,6 @@ class UserModel extends Model
 		'active',
 		'force_pass_reset',
 		'permissions',
-		'school_id',
 		'mobile',
 		'full_name',
 		'description',
@@ -101,13 +102,10 @@ class UserModel extends Model
 		'name'     => 'full_name',
 	];
 
-	public function fake(&$faker)
+	public function fake(Generator &$faker): User
 	{
-		$schoolModel = new SchoolModel();
-		$schools     = $schoolModel->findColumn('id');
 
-		return [
-			'school_id'   => $faker->randomElement($schools),
+		return new User([
 			'mobile'      => $faker->numberBetween(
 													$min = 6000000000,
 													$max = 9999999999
@@ -118,54 +116,7 @@ class UserModel extends Model
 			'password'    => getenv('auth.defaultPassword'),
 			'active'      => 1,
 			'description' => $faker->text($maxNbChars = 200),
-		];
+		]);
 	}
 
-	/**
-	 * Returns an array of all classes that the user belongs to.
-	 *
-	 * @param integer $userId
-	 *
-	 * @return array
-	 */
-	public function getClasses(int $userId)
-	{
-		if (! $found = cache($userId . '_classes'))
-		{
-			$found = $this->builder()
-				->select('classes.*')
-				->join('classes_users', 'classes_users.user_id = users.id', 'left')
-				->join('classes', 'classes_users.class_id = classes.id', 'left')
-				->where('users.id', $userId)
-				->get()->getResultArray();
-
-			cache()->save($userId . '_classes', $found, env('app.cacheTimeout', 300));
-		}
-
-		return $found;
-	}
-
-	/**
-	 * Returns an array of all schools that the user belongs to.
-	 *
-	 * @param integer $userId
-	 *
-	 * @return array
-	 */
-	public function getSchool(int $userId)
-	{
-		if (! $found = cache($userId . '_schools'))
-		{
-			$found = $this->builder()
-				->select('schools.*')
-				->join('schools', 'schools.id = users.school_id', 'left')
-				->where('users.id', $userId)
-				//->getCompiledSelect();
-				->get()->getResultArray();
-
-			cache()->save($userId . '_schools', $found, env('app.cacheTimeout', 300));
-		}
-
-		return $found;
-	}
 }

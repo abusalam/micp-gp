@@ -8,7 +8,6 @@
 					<h2 class="card-title"><?=lang('app.home.welcome')?></h2>
 					<div class="card-body">
 						<?= view('Myth\Auth\Views\_message_block') ?>
-						<?=view('layout/parts/YouTube', [], ['cache' => 3600])?>
 						<div class="table-responsive">
 							<pre>
 								<?php use CodeIgniter\CLI\CLI;?>

@@ -53,7 +53,7 @@
 								</div>
 								<div class="form-row row-eq-spacing-md">
 								<div class="col-md-6 float-left"> <!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% -->
-									<div class="card p-0"> <!-- p-0 = padding: 0 -->
+									<div class="card m-0 p-0"> <!-- p-0 = padding: 0 -->
 										<!-- Card header -->
 										<div class="px-card py-10 border-bottom"> <!-- py-10 = padding-top: 1rem (10px) and padding-bottom: 1rem (10px), border-bottom: adds a border on the bottom -->
 										<h2 class="card-title font-size-18 m-0"> <!-- font-size-18 = font-size: 1.8rem (18px), m-0 = margin: 0 -->
@@ -115,7 +115,7 @@
 									</div>
 								</div>
 								<div class="col-md-6 float-left"> <!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% -->
-									<div class="card p-0"> <!-- p-0 = padding: 0 -->
+									<div class="card m-0 p-0"> <!-- p-0 = padding: 0 -->
 										<!-- Card header -->
 										<div class="px-card py-10 border-bottom"> <!-- py-10 = padding-top: 1rem (10px) and padding-bottom: 1rem (10px), border-bottom: adds a border on the bottom -->
 										<h2 class="card-title font-size-18 m-0"> <!-- font-size-18 = font-size: 1.8rem (18px), m-0 = margin: 0 -->

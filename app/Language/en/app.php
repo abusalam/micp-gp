@@ -5,7 +5,7 @@
 			'desc'  => 'To access assignments and get them evaluated.',
 		],
 		'home'           => [
-			'welcome'    => 'Welcome to Jungle Kanya Launch',
+			'welcome'    => 'Welcome to Gate Pass Issuing System',
 			'disclaimer' => 'Contents owned, maintained and updated by - ',
 		],
 		'menu'           => [

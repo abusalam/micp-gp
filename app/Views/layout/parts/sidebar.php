@@ -22,7 +22,7 @@
 	
 		<h5 class="sidebar-title font-weight-bold">
 			<?=user()->full_name?>
-			(<?=(user_id() === '1') ? 'Super Admin' : ((ENVIRONMENT !== 'production') ? join(',', user()->getRoles()) : '')?>)
+			<?=(user_id() === '1') ? '(Super Admin)' : ((ENVIRONMENT !== 'production') ? '(' . join(',', user()->getRoles()) . ')' : '')?>
 		</h5>
 		<div class="sidebar-divider"></div>
 

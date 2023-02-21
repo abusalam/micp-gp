@@ -62,8 +62,6 @@ writable/uploads/*
 
 writable/debugbar/*
 
-writable/*
-
 php_errors.log
 
 #-------------------------

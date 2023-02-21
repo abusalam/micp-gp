@@ -19,23 +19,11 @@ class AccountController extends BaseController
 	public function create()
 	{
 		$data['config'] = $this->config;
-		if (user_id() === '1')
-		{
-			$data['schools'] = model('SchoolModel')->findAll();
-		}
-		else
-		{
-			$schools = [];
-			array_push($schools, new School(session('school')));
-			$data['schools'] = $schools;
-		}
 		$fabricator   = new Fabricator(UserModel::class);
 		$data['user'] = (ENVIRONMENT !== 'production') ? $fabricator->make() : new User();
-		$data['user']->setSchoolId(session('school.id'));
 		$groups          = new GroupModel();
 		$data['roles']   = $groups->asArray()->findAll();
 		$db              = db_connect();
-		$data['classes'] = $db->table('classes')->select('id, class')->get()->getResultArray();
 		$db->close();
 		return view('Account/create-form', $data);
 	}
@@ -53,7 +41,6 @@ class AccountController extends BaseController
 			'email'         => 'required|valid_email|is_unique[users.email]',
 			'full_name'     => 'required|alpha_space|min_length[6]',
 			'mobile'        => 'required|numeric|exact_length[10]|is_unique[users.mobile,mobile,{mobile}]',
-			'school_id'     => 'required|numeric',
 			'password_hash' => 'if_exist',
 			'password'      => 'if_exist',
 		];
@@ -102,10 +89,6 @@ class AccountController extends BaseController
 	public function profile()
 	{
 		$data['config']  = $this->config;
-		$data['schools'] = model('SchoolModel')->findAll();
-		$db              = db_connect();
-		$data['classes'] = $db->table('classes')->select('id, class')->get()->getResultArray();
-		$db->close();
 		$data['user'] = model('UserModel')->find(user_id());
 
 		// Display message if Update is Required
@@ -125,8 +108,6 @@ class AccountController extends BaseController
 		$rules = [
 			'full_name'   => 'required|alpha_space|min_length[6]',
 			'mobile'      => 'required|numeric|exact_length[10]|is_unique[users.mobile,mobile,{mobile}]',
-			'school_id'   => 'required|numeric',
-			'class_id'    => 'permit_empty|numeric',
 			'description' => 'permit_empty|string',
 			'photo'       => 'if_exist|uploaded[photo]|is_image[photo]',
 		];
@@ -139,13 +120,6 @@ class AccountController extends BaseController
 		if (! $newUserModel->save($newUser))
 		{
 			return redirect()->back()->withInput()->with('errors', $newUserModel->errors());
-		}
-		else if ($this->request->getPost('class_id'))
-		{
-			$newClassModel = new ClassModel();
-			// Users Restricted to One Class Only
-			$newClassModel->removeUserFromAllClasses(user_id());
-			$newClassModel->addUserToClass(user_id(), $this->request->getPost('class_id'));
 		}
 
 		//Update session so that routes can be defined
@@ -163,8 +137,7 @@ class AccountController extends BaseController
 		if (user_id() === '1')
 		{
 			$_SESSION['heads'] = [
-				'id'         => 'ID# | Role | Class',
-				'school_id'  => 'School',
+				'id'         => 'ID# | Role',
 				'mobile'     => 'Mobile',
 				'full_name'  => 'Name',
 				'email'      => 'E-Mail ID',
@@ -182,7 +155,7 @@ class AccountController extends BaseController
 		else
 		{
 			$_SESSION['heads'] = [
-				'id'        => 'ID# | Role | Class',
+				'id'        => 'ID# | Role',
 				'mobile'    => 'Mobile',
 				'full_name' => 'Name',
 				'email'     => 'E-Mail ID',
@@ -190,7 +163,6 @@ class AccountController extends BaseController
 
 			$sort  = array_key_exists($sort, $_SESSION['heads']) ? $sort : 'id';
 			$users = $userModel->asArray()
-				->where('school_id', session('school.id'))
 				->orderBy('full_name')
 				->paginate();
 		}
@@ -211,18 +183,13 @@ class AccountController extends BaseController
 				case ($key === 'id'):
 					$currentUser = model('UserModel')->find($value);
 					$value       = trim('<a href="' . base_url(route_to('update-user', $value)) . '">' . $value . '</a>'
-													. ' | ' . join(',', $currentUser->getRoles())
-													. ' | ' . $currentUser->getClassName(), ' | ');
+													. ' | ' . join(',', $currentUser->getRoles()) . ' | ' );
 				break;
 
 				case ($key === 'email'):
 					$value = '<a title="' . lang('app.account.resendActivation') . '" '
 								. 'href="' . base_url(route_to('resend-activate-account')) . '?login=' . $value . '">'
 								. $value . '</a>';
-				break;
-
-				case ($key === 'school_id'):
-					$value = $value . ' | ' . model('SchoolModel')->find($value)->school;
 				break;
 
 			}
@@ -272,16 +239,10 @@ class AccountController extends BaseController
 
 		$newUserModel = new UserModel();
 		$newUser      = $newUserModel->find($id)->fill($this->request->getPost());
-		if (user_id() !== '1')
-		{
-			$newUser->setSchoolId(session('school.id'));
-		}
 
 		$rules = [
 			'full_name'   => 'required|alpha_space|min_length[6]',
 			'mobile'      => 'required|numeric|exact_length[10]|is_unique[users.mobile,mobile,{mobile}]',
-			'school_id'   => 'required|numeric',
-			'class_id'    => 'permit_empty|numeric',
 			'description' => 'permit_empty|string',
 			'photo'       => 'if_exist|uploaded[photo]|is_image[photo]',
 		];
@@ -294,13 +255,6 @@ class AccountController extends BaseController
 		if (! $newUserModel->save($newUser))
 		{
 			return redirect()->back()->withInput()->with('errors', $newUserModel->errors());
-		}
-		else if ($this->request->getPost('class_id'))
-		{
-			$newClassModel = new ClassModel();
-			// Users Restricted to One Class Only
-			$newClassModel->removeUserFromAllClasses(user_id());
-			$newClassModel->addUserToClass(user_id(), $this->request->getPost('class_id'));
 		}
 
 		return redirect()->to(base_url(route_to('update-user', $id)))->with('message', lang('app.account.saveSuccess'));
@@ -318,15 +272,9 @@ class AccountController extends BaseController
 	{
 		$currentUser = model('UserModel')->find($user->id);
 
-		$currentUser->isProfileUpdateRequired();
+		//$currentUser->isProfileUpdateRequired();
 
-		session()->set(
-			'school', [
-				'class_id' => $currentUser->getClassId(),
-				'class'    => $currentUser->getClassName(),
-				'id'       => $currentUser->getSchoolId(),
-				'school'   => $currentUser->getSchoolName(),
-			]);
+		session()->set('school', []);
 	}
 	public static function onLogoutEvent($user)
 	{
