@@ -170,7 +170,7 @@
 		],
 		'booking'     => [
 			'createTitle'     => 'Gate Pass',
-			'createHelp'      => 'Pass validity is 30days from date of issue.',
+			'createHelp'      => 'Pass validity is 30 days from the date of issue.',
 			'vehicleNo'       => 'Vehicle No',
 			'driverTitle'     => 'Driver Details',
 			'crewTitle'       => 'Crew Details',

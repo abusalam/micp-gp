@@ -70,17 +70,19 @@ class BookingModel extends Model
 	 * @var array
 	 */
 	protected $allowedFields = [
-		'ticket',
-		'passenger',
-		'address',
-		'mobile',
+		'vehicle_no',
 		'purpose',
-		'booking_date',
-		'start_time',
-		'hours',
-		'amount',
-		'pg_resp',
-		'status',
+		'license_no',
+		'driver_name',
+		'driver_mobile',
+		'driver_address',
+		'driver_photo',
+		'crew_id_type',
+		'crew_id_no',
+		'crew_name',
+		'crew_mobile',
+		'crew_address',
+		'crew_photo',
 	];
 
 	/**
@@ -140,14 +142,28 @@ class BookingModel extends Model
 	public function fake(&$faker)
 	{
 		return [
-			'ticket'    => $faker->ean8,
-			'passenger' => $faker->name,
-			'mobile'    => $faker->numberBetween(
+			'vehicle_no'    => $faker->ean8,
+			'issued_on'   => $faker->address,
+			'valid_till'   => $faker->address,
+			'purpose'   => $faker->sentence($nbWords = 4, $variableNbWords = true),
+
+			'license_no'    => $faker->ean8,
+			'driver_name' => $faker->name,
+			'driver_mobile'    => $faker->numberBetween(
 				                    $min = 6000000000,
 				                    $max = 9999999999
 			               ),
-			'address'   => $faker->address,
-			'purpose'   => $faker->sentence($nbWords = 4, $variableNbWords = true),
+			'driver_address'   => $faker->address,
+
+			'crew_id_type'    => $faker->randomElement(['EPIC ID', 'Ration Card']),
+			'crew_id_no'    => $faker->ean8,
+			'crew_name' => $faker->name,
+			'crew_mobile'    => $faker->numberBetween(
+				                    $min = 6000000000,
+				                    $max = 9999999999
+			               ),
+			'crew_address'   => $faker->address,
+
 		];
 	}
 
@@ -167,23 +183,25 @@ class BookingModel extends Model
 	 * @var array
 	 */
 	protected $validationRules = [
-		'passenger' => 'required|string|max_length[100]',
-		'mobile'    => 'required|integer|is_natural_no_zero|exact_length[10]',
-		'address'   => 'required|string|max_length[255]',
+		'vehicle_no' => 'required|string|max_length[10]',
+		'license_no' => 'required|string|max_length[50]',
+		'driver_name' => 'required|string|max_length[100]',
+		'driver_mobile'    => 'required|integer|is_natural_no_zero|exact_length[10]',
+		'driver_address'   => 'required|string|max_length[255]',
 		'purpose'   => 'required|string|max_length[255]',
 	];
 
 	//protected $beforeInsert = ['setBookingDate'];
 	//protected $beforeUpdate = ['setBookingDate'];
 
-	protected function setBookingDate(array $data)
+	protected function setPassValidity(array $data)
 	{
-		if (! isset($data['data']['booking_date'])) {
+		if (! isset($data['data']['issued_on'])) {
 				return $data;
 		}
 
-		$data['data']['booking_date'] = \DateTime::createFromFormat("Y-m-d H:i:s", $data['data']['booking_date'])->format("Y-m-d");
-		unset($data['data']['booking_date']);
+		$data['data']['issued_on'] = \DateTime::createFromFormat("Y-m-d", $data['data']['issued_on'])->format("Y-m-d");
+		unset($data['data']['issued_on']);
 
 		return $data;
 	}

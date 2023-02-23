@@ -33,13 +33,13 @@
 								<pre><?php //var_dump($booking->getTimeSlots() ?? '')?></pre>
 								<div class="form-row row-eq-spacing-md">
 									<div class="col-md-6">
-										<div class="form-group <?php if(session('errors.passenger')) : ?>is-invalid<?php endif ?>">
-											<label for="passenger" class="required">
+										<div class="form-group <?php if(session('errors.vehicle_no')) : ?>is-invalid<?php endif ?>">
+											<label for="vehicle_no" class="required">
 												<?=lang('app.booking.vehicleNo')?>
 											</label>
-											<input type="text" class="form-control" id="passenger" required="required"
-													name="passenger" placeholder="<?=lang('app.booking.vehicleNo')?>"
-													value="<?=old('passenger', $booking->passenger) ?>">
+											<input type="text" class="form-control" id="vehicle_no" required="required"
+													name="vehicle_no" placeholder="<?=lang('app.booking.vehicleNo')?>"
+													value="<?=old('vehicle_no', $booking->vehicle_no) ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
@@ -71,44 +71,42 @@
 													</div>
 												</div>
 												<div class="col-md-6">
-													<div class="form-group <?php if(session('errors.passenger')) : ?>is-invalid<?php endif ?>">
-														<label for="passenger" class="required">
+													<div class="form-group <?php if(session('errors.license_no')) : ?>is-invalid<?php endif ?>">
+														<label for="license_no" class="required">
 															<?=lang('app.booking.driverLicense')?>
 														</label>
-														<input type="text" class="form-control" id="passenger" required="required"
-																name="passenger" placeholder="<?=lang('app.booking.driverLicense')?>"
-																value="<?=old('passenger', $booking->passenger) ?>">
+														<input type="text" class="form-control" id="license_no" required="required"
+																name="license_no" placeholder="<?=lang('app.booking.driverLicense')?>"
+																value="<?=old('license_no', $booking->license_no) ?>">
 													</div>
-													<div class="form-group <?php if(session('errors.passenger')) : ?>is-invalid<?php endif ?>">
-														<label for="passenger" class="required">
+													<div class="form-group <?php if(session('errors.driver_name')) : ?>is-invalid<?php endif ?>">
+														<label for="driver_name" class="required">
 															<?=lang('app.booking.driverName')?>
 														</label>
-														<input type="text" class="form-control" id="passenger" required="required"
-																name="passenger" placeholder="<?=lang('app.booking.driverName')?>"
-																value="<?=old('passenger', $booking->passenger) ?>">
+														<input type="text" class="form-control" id="driver_name" required="required"
+																name="driver_name" placeholder="<?=lang('app.booking.driverName')?>"
+																value="<?=old('driver_name', $booking->driver_name) ?>">
 													</div>
 												</div>
 
 											</div>
 											<div class="form-row row-eq-spacing-md">
 												<div class="col-md-6">
-													<div class="form-group <?php if(session('errors.mobile')) : ?>is-invalid<?php endif ?>">
-														<label for="mobile" class="required"><?=lang('app.booking.driverMobile')?></label>
-														<input type="text" class="form-control" id="mobile" required="required"
-																	name="mobile" placeholder="<?=lang('app.booking.driverMobile')?>"
-																	value="<?=old('mobile', $booking->mobile) ?>">
+													<div class="form-group <?php if(session('errors.driver_mobile')) : ?>is-invalid<?php endif ?>">
+														<label for="driver_mobile" class="required"><?=lang('app.booking.driverMobile')?></label>
+														<input type="text" class="form-control" id="driver_mobile" required="required"
+																	name="driver_mobile" placeholder="<?=lang('app.booking.driverMobile')?>"
+																	value="<?=old('driver_mobile', $booking->driver_mobile) ?>">
 													</div>
 												</div>
 												<div class="col-md-6 ">
-													<div class="form-group <?php if(session('errors.address')) : ?>is-invalid<?php endif ?>">
-														<label for="address" class="required"><?=lang('app.booking.driverAddress')?></label>
-														<input type="text" class="form-control" id="address" required="required"
-																name="address" placeholder="<?=lang('app.booking.driverAddress')?>"
-																value="<?=old('address', $booking->address) ?>">
+													<div class="form-group <?php if(session('errors.driver_address')) : ?>is-invalid<?php endif ?>">
+														<label for="driver_address" class="required"><?=lang('app.booking.driverAddress')?></label>
+														<input type="text" class="form-control" id="driver_address" required="required"
+																name="driver_address" placeholder="<?=lang('app.booking.driverAddress')?>"
+																value="<?=old('driver_address', $booking->driver_address) ?>">
 													</div>
 												</div>
-
-
 											</div>
 										</div>
 										<!-- Card footer -->
@@ -126,56 +124,56 @@
 										<div class="content">
 											<div class="form-row row-eq-spacing-md">
 												<div class="col-md-6">
-													<div class="card p-0 m-0 <?php if(session('errors.mobile')) : ?>is-invalid<?php endif ?>" data-toggle="tooltip" data-title="Click to Capture Photo" data-placement="bottom">
+													<div class="card p-0 m-0" data-toggle="tooltip" data-title="Click to Capture Photo" data-placement="bottom">
 														<a href="#modal-1" role="button">													
 															<canvas id="canvas" width="180" height="200"></canvas>
 														</a>
 													</div>
 												</div>
 												<div class="col-md-6">
-													<div class="form-group <?php if(session('errors.mobile')) : ?>is-invalid<?php endif ?>">
-														<label for="mobile" class="required"><?=lang('app.booking.crewMobile')?></label>
-														<input type="text" class="form-control" id="mobile" required="required"
-																	name="mobile" placeholder="<?=lang('app.booking.crewMobile')?>"
-																	value="<?=old('mobile', $booking->mobile) ?>">
+													<div class="form-group <?php if(session('errors.crew_mobile')) : ?>is-invalid<?php endif ?>">
+														<label for="crew_mobile" class="required"><?=lang('app.booking.crewMobile')?></label>
+														<input type="text" class="form-control" id="crew_mobile" required="required"
+																	name="crew_mobile" placeholder="<?=lang('app.booking.crewMobile')?>"
+																	value="<?=old('crew_mobile', $booking->crew_mobile) ?>">
 													</div>
-													<div class="form-group <?php if(session('errors.passenger')) : ?>is-invalid<?php endif ?>">
-														<label for="passenger" class="required">
+													<div class="form-group <?php if(session('errors.crew_name')) : ?>is-invalid<?php endif ?>">
+														<label for="crew_name" class="required">
 															<?=lang('app.booking.crewName')?>
 														</label>
-														<input type="text" class="form-control" id="passenger" required="required"
-																name="passenger" placeholder="<?=lang('app.booking.crewName')?>"
-																value="<?=old('passenger', $booking->passenger) ?>">
+														<input type="text" class="form-control" id="crew_name" required="required"
+																name="crew_name" placeholder="<?=lang('app.booking.crewName')?>"
+																value="<?=old('crew_name', $booking->crew_name) ?>">
 													</div>
 												</div>
 											</div>
 											<div class="form-row row-eq-spacing-md">
 												<div class="col-md-6">
-												<div class="form-group <?php if(session('errors.address')) : ?>is-invalid<?php endif ?>">
-														<label for="address" class="required"><?=lang('app.booking.crewIdCardType')?></label>
-														<input type="text" class="form-control" id="address" required="required"
-																name="address" placeholder="<?=lang('app.booking.crewIdCardType')?>"
-																value="<?=old('address', $booking->address) ?>">
+												<div class="form-group <?php if(session('errors.crew_id_type')) : ?>is-invalid<?php endif ?>">
+														<label for="crew_id_type" class="required"><?=lang('app.booking.crewIdCardType')?></label>
+														<input type="text" class="form-control" id="crew_id_type" required="required"
+																name="crew_id_type" placeholder="<?=lang('app.booking.crewIdCardType')?>"
+																value="<?=old('crew_id_type', $booking->crew_id_type) ?>">
 													</div>
 
 												</div>
 												<div class="col-md-6">
-													<div class="form-group">
-														<label for="passenger" class="required">
+													<div class="form-group <?php if(session('errors.crew_id_no')) : ?>is-invalid<?php endif ?>">
+														<label for="crew_id_no" class="required">
 															<?=lang('app.booking.crewIdCardNo')?>
 														</label>
-														<input type="text" class="form-control" id="passenger" required="required"
-																name="passenger" placeholder="<?=lang('app.booking.crewIdCardNo')?>"
-																value="<?=old('passenger', $booking->passenger) ?>">
+														<input type="text" class="form-control" id="crew_id_no" required="required"
+																name="crew_id_no" placeholder="<?=lang('app.booking.crewIdCardNo')?>"
+																value="<?=old('crew_id_no', $booking->crew_id_no) ?>">
 													</div>
 
 												</div>													
 											</div>
-											<div class="form-group <?php if(session('errors.address')) : ?>is-invalid<?php endif ?>" >
-												<label for="address" class="required"><?=lang('app.booking.crewAddress')?></label>
-												<input type="text" class="form-control" id="address" required="required"
-														name="address" placeholder="<?=lang('app.booking.crewAddress')?>"
-														value="<?=old('address', $booking->address) ?>">
+											<div class="form-group <?php if(session('errors.crew_address')) : ?>is-invalid<?php endif ?>" >
+												<label for="crew_address" class="required"><?=lang('app.booking.crewAddress')?></label>
+												<input type="text" class="form-control" id="crew_address" required="required"
+														name="crew_address" placeholder="<?=lang('app.booking.crewAddress')?>"
+														value="<?=old('crew_address', $booking->crew_address) ?>">
 											</div>
 										</div>
 										<!-- Card footer -->

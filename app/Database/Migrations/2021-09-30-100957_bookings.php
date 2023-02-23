@@ -13,58 +13,65 @@ class Bookings extends Migration
 				'unsigned'       => true,
 				'auto_increment' => true,
 			],
-			'ticket'     => [
-				'type'       => 'varchar',
-				'constraint' => 25,
-			],
-			'passenger'  => [
-				'type'       => 'varchar',
-				'constraint' => 100,
-			],
-			'mobile'     => [
+			'vehicle_no'     => [
 				'type'       => 'varchar',
 				'constraint' => 10,
-			],
-			'address'    => [
-				'type'       => 'varchar',
-				'constraint' => 255,
 			],
 			'purpose'    => [
 				'type'       => 'varchar',
 				'constraint' => 255,
 			],
-			'booking_date'  => [
+			'license_no'  => [
+				'type'       => 'varchar',
+				'constraint' => 50,
+			],
+			'driver_name'  => [
+				'type'       => 'varchar',
+				'constraint' => 100,
+			],
+			'driver_mobile'     => [
+				'type'       => 'varchar',
+				'constraint' => 10,
+			],
+			'driver_address'    => [
+				'type'       => 'varchar',
+				'constraint' => 255,
+			],
+			'driver_photo'    => [
+				'type'       => 'TEXT',
+				'null'       => true,
+			],
+			'issued_on'  => [
 				'type' => 'date',
 				'null' => true,
 			],
-			'start_time'  => [
-				'type'       => 'varchar',
-				'constraint' => 25,
-			],
-			'hours'       => [
-				'type'       => 'int',
-				'constraint' => 11,
-				'unsigned'   => true,
-				'default'    => 2,
-			],
-			'amount'     => [
-				'type'       => 'int',
-				'constraint' => 11,
-				'unsigned'   => true,
-				'default'    => 0,
-			],
-			'status'     => [
-				'type'       => 'ENUM',
-				'constraint' => [
-					'pending',
-					'FAILED',
-					'SUCCESS',
-				],
-				'default'    => 'pending',
-			],
-			'pg_resp' => [
-				'type' => 'TEXT',
+			'valid_till'  => [
+				'type' => 'date',
 				'null' => true,
+			],
+			'crew_name'  => [
+				'type'       => 'varchar',
+				'constraint' => 100,
+			],
+			'crew_mobile'     => [
+				'type'       => 'varchar',
+				'constraint' => 10,
+			],
+			'crew_id_type'  => [
+				'type'       => 'varchar',
+				'constraint' => 100,
+			],
+			'crew_id_no'     => [
+				'type'       => 'varchar',
+				'constraint' => 100,
+			],
+			'crew_address'    => [
+				'type'       => 'varchar',
+				'constraint' => 255,
+			],
+			'crew_photo'    => [
+				'type'       => 'TEXT',
+				'null'       => true,
 			],
 			'created_at' => [
 				'type' => 'datetime',

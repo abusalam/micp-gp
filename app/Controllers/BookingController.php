@@ -114,51 +114,7 @@ class BookingController extends BaseController
 		$newBooking   = new Booking();
 		$newBooking->fill($this->request->getPost());
 		session()->set('post_data', $this->request->getPost());
-		$newBooking->setDate(
-			$this->request->getPost('date')
-		)
-		->setStartTime(
-			$this->request->getPost('startTime')
-		)
-		->setAmount(
-			$this->request->getPost('hours')
-		);
-
-		//Check if the date is valid
-		if(!$newBooking->isValidBookingDateTime())
-		{
-			return redirect()->back()->withInput()->with('message', 'Invalid booking datetime!');
-		}
-
-		// Check if the Start Time and hours are valid
-		$newBookingSlot = $newBooking->getBookedSlot();
-
-		if(!$newBookingSlot) {
-			return redirect()->back()->withInput()->with('message', 'Invalid booking hours!');
-		}
-
-		// Check if the slot is already booked
-		$newBookingDate = \DateTime::createFromFormat("d/m/Y", $this->request->getPost('date'))->format("Y-m-d");
-
-		$bookings = $bookingModel->where('booking_date', $newBookingDate)
-		->where('status', 'SUCCESS')
-		->findAll();
-		
-		$booked=FALSE;
-		$bookedSlots = array();
-		$newSlot = $newBooking->getSlot();
-		foreach($bookings as $booking) {
-			array_push($bookedSlots, $booking->getBookedSlot());
-			if($booking->getSlot() == $newSlot) {
-				$booked=TRUE;
-			}
-		}
-
-		session()->set('booked_slots', $bookedSlots);
-
-		if($booked) {
-			return redirect()->back()->withInput()->with('message', 'Slot Already Booked!');
-		}
+		//$newBooking->setPassValidity();
 
 		if (! $bookingModel->save($newBooking))
 		{
@@ -168,156 +124,14 @@ class BookingController extends BaseController
 		$parser = \Config\Services::parser();
 		$data   = [
 			'id'    => $bookingModel->getInsertID(),
-			'amount' => $newBooking->getAmount(),
 		];
-		return redirect()->to(base_url(route_to('make-payment', $data['id'])))
-							->with(
-								'message',
-								$parser->setData($data)
-								->renderString(lang('app.booking.btnPayTitle'))
-							);
-	}
-
-	public function makePayment(int $id)
-	{
-		$found = model('BookingModel')->find($id);
-		if (! $found)
-		{
-			return redirect()->to(base_url(route_to('create-booking')))
-					->with('error', lang('app.assignment.notFound'));
-		}
-
-		$client = new Client(['base_uri' => env('PG_URI')]);
-		$requestBody = [
-			'customer_details' => [
-				'customer_id'    => $found->mobile,
-				'customer_name'  => $found->passenger,
-				'customer_email' => $found->mobile . '@example.com',
-				'customer_phone' => $found->mobile
-			],
-			'order_meta' => [
-				'return_url' => base_url(route_to('status', $id)) . '?order_id={order_id}&order_token={order_token}',
-				'notify_url' => base_url(route_to('webhook', $id)),
-			],
-			'order_expiry_time' => date(DATE_ATOM, time() + 960),
-			'order_amount'      => $found->amount,
-			'order_note'        => $found->getBookedSlot(),
-			'order_currency'    =>'INR',
-		];
-
-		$response = $client->request('POST', 'orders', [
-			//'verify' => false,
-			'body' => json_encode($requestBody),//'{"customer_details":{"customer_id":"9876543210","customer_email":"john@example.com","customer_phone":"9876543210"},"order_expiry_time":"2022-02-15T00:00:00Z","order_amount":10.15,"order_currency":"INR"}',
-			'headers' => [
-				'Accept' => 'application/json',
-				'Content-Type' => 'application/json',
-				'x-api-version' => '2022-01-01',
-				'x-client-id' => env('PG_APP_ID'),
-				'x-client-secret' => env('PG_SECRET'),
-			],
-		]);
-
-		$data['pg_resp'] = json_decode($response->getBody());
-
-		$data['id']     = $id;
-		$data['booking']  = $found;
 		
-		$data['config'] = $this->config;
-		return view('Booking/view-form', $data);
-	}
-
-	public function tryToMakePayment(int $id)
-	{
-
-	}
-
-	public function setStatus(int $id)
-	{
-
-		$bookingModel = new BookingModel();
-		$bookingOrder = model('BookingModel')->find($id);
-		if (! $bookingOrder)
-		{
-			return redirect()->to(base_url(route_to('create-booking')))
-					->with('error', lang('app.assignment.notFound'));
-		}
-
-
-		$client = new Client(['base_uri' => env('PG_URI')]);
-
-		$response = $client->request('GET', 'orders/' . $this->request->getVar('order_id'), [
-			'headers' => [
-				'Accept' => 'application/json',
-				'x-api-version' => '2022-01-01',
-				'x-client-id' => env('PG_APP_ID'),
-				'x-client-secret' => env('PG_SECRET'),
-			],
-		]);
-
-		$data['pg_resp'] = json_decode($response->getBody());
-
-		$status = 'FAILED';
-		if($data['pg_resp']->order_status=='PAID') {
-			$status = 'SUCCESS';
-		}
-		$data['id']     = $id;
-		$data['booking']  = $bookingOrder;
-		$bookingOrder
-		->setStatus($status)
-		->setTicket($data['pg_resp']->cf_order_id)
-		->setPgResp(json_encode($data['pg_resp']));
-	
-	
-		if (! $bookingModel->save($bookingOrder))
-		{
-			return redirect()->back()->withInput()->with('errors', $bookingModel->errors());
-		}
-		
+		$data['booking']  = $newBooking;
 		$data['config'] = $this->config;
 		return view('Booking/status-form', $data);
 	}
 
-	public function webhook(int $id)
-	{
-		$bookingModel = new BookingModel();
-
-		$bookingOrder = model('BookingModel')->find($id);
-		if (! $bookingOrder)
-		{
-			return redirect()->to(base_url(route_to('create-booking')))
-					->with('error', lang('app.assignment.notFound'));
-		}
-		
-		$data['pg_resp'] = json_encode($this->request->getPost());
-
-		$postData = $this->request->getPost();
-		$orderId = $orderDetails["orderId"];
-		$referenceId = $orderDetails["referenceId"];
-		$orderAmount = $orderDetails["orderAmount"];
-		$status = $orderDetails["txStatus"];
-		$message = $orderDetails["txMsg"];
-		$transactionTime = $orderDetails["txTime"];
-		$paymentMode = $orderDetails["paymentMode"];
-		$accesskey = env('PG_SECRET');
-		$dataToHash = $orderId.$orderAmount.$referenceId.$status.$paymentMode.$message.$transactionTime;
-		$hash_hmac = hash_hmac('sha256', $dataToHash, $accesskey, true) ;
-		$signature =  base64_encode($hash_hmac);
-
-		if($signature == $this->request->getPost('signature')){
-
-			$bookingOrder
-				->setStatus($status)
-				->setPgResp($this->request->getRawInput());
-			
-			
-			if (! $bookingModel->save($bookingOrder))
-			{
-				return redirect()->back()->withInput()->with('errors', $bookingModel->errors());
-			}
-		} 
-
-	}
-
+	
 	public function printReceipt(int $id)
 	{
 		$bookingOrder = model('BookingModel')->find($id);
@@ -328,104 +142,73 @@ class BookingController extends BaseController
 		}
 		$pdf = new FPDF();		
 		$pdf->AddPage();
-		$pdf->SetFont('Arial','B',20);
-		$pdf->Cell(0,20,'MV JANGAL KANYA (WATER TOURISM)',0,1,'C');
-		$pdf->SetFont('Arial','B',16);
-		$pdf->Cell(0,10,'Ticket No: ' . $bookingOrder->ticket,1,1,'C');
-		$pdf->SetFont('Arial','B',12);
-		$pdf->Cell(140,10,$bookingOrder->passenger,1);
-		$pdf->Cell(0,10,'Status: ' . $bookingOrder->getStatus(),1,1);
-		$pdf->Cell(140,10,'Journey Schedule: ' . $bookingOrder->getBookedSlot(),1);
-		$pdf->Cell(0,10,'Rs. ' . $bookingOrder->getAmount(),1,1,'C');
-
-		$pdf->Cell(0,10,'Mobile: ' . $bookingOrder->getMobile(),1,1);
-		$pdf->Cell(0,10,'Address: ' . $bookingOrder->getAddress(),1,1);
-		$pdf->Cell(0,10,'Purpose: ' . $bookingOrder->getPurpose(),1,1);
-
-		$pdf->Ln(4);
-		$pdf->SetFont('Arial','B',20);
-		$pdf->Cell(5,5,chr(149),0,0);
-		$pdf->SetFont('Arial','B',10);
-		$pdf->Cell(65,5, 'Boat Driver Mobile No: ' . env('CONTACT_DRIVER') ,0,1);
-		$pdf->SetFont('Arial','B',20);
-		$pdf->Cell(5,5,chr(149),0,0);
-		$pdf->SetFont('Arial','B',10);
-		$pdf->Cell(65,5, 'Coordinator Mobile No: ' . env('CONTACT_MOBILE') . ' E-Mail ID: ' . env('CONTACT_EMAIL'),0,1);
+		for ($i=0;$i<=1;$i++)
+		{
+			$pdf->SetFont('Arial','B',20);
+			$pdf->Cell(0,10,'GATE PASS',0,1,'C');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Cell(0,5,'MAHADIPUR  IMMIGRATION CHECKPOST',0,1,'C');
+			$pdf->SetFont('Arial','',10);
+			$pdf->Cell(0,5,'MAHADIPUR,ENGLISHBAZAR ,MALDA. (WB)',0,1,'C');
+	
+			$pdf->SetFont('Courier','',11);
+			$pdf->Cell(60,5,'',0,0);
+			$pdf->Cell(70,5,'Gate Pass No: ' . $bookingOrder->getPassNo(),1,1,'C');
+			$pdf->SetFont('Times','B',11);
+			$pdf->Cell(0,10,'For Driver and Crew of Export/ Import Vehicle',0,1,'C');
+			//$pdf->Cell(0,8,'|',0,1,'C');
+			$pdf->Cell(95,5,'Issued on: ' . $bookingOrder->getIssueDate(),0,0);
+			$pdf->Cell(0,5,'Valid till: ' . $bookingOrder->getValidTill(),0,1);
+			//$pdf->Cell(140,10,'Journey Schedule: ' . $bookingOrder->getBookedSlot(),1);
+			//$pdf->Cell(0,10,'Rs. ' . $bookingOrder->getAmount(),1,1,'C');
+			
+			$pdf->SetFont('Courier','',11);
+			$AddrY = $pdf->GetY();
+			$AddrX = $pdf->GetX();
+			$pdf->Cell(0,36,'',0,1);
+			$lineHeight=5;
+			$pdf->Cell(95,$lineHeight,'1. Truck No: ' . $bookingOrder->getVehicleNo(),'T',0);
+			$pdf->Cell(0,$lineHeight,'1. Name of Crew: ' . $bookingOrder->getCrewName(),'T',1);
+			
+			$pdf->Cell(95,$lineHeight,'2. Name of Driver: ' . $bookingOrder->getDriverName(),'T',0);
+			$pdf->Cell(0,$lineHeight,'2. Crew ID Card Type: ' . $bookingOrder->getCrewIdType(),'T',1);
+			
+			$pdf->Cell(95,$lineHeight,'3. D/L No: ' . $bookingOrder->getLicenseNo(),'T',0);
+			$pdf->Cell(0,$lineHeight,'3. Crew ID Card No: ' . $bookingOrder->getCrewID(),'T',1);
+			
+			$pdf->Cell(95,$lineHeight,'4. D.O.B: ' . $bookingOrder->getDOB(),'T',0);
+			
+			$pdf->MultiCell(0,$lineHeight,'4. Address of Crew: ' . $bookingOrder->getDriverName(),'T',1);
+	
+			$pdf->MultiCell(95,$lineHeight,'5. Address of Driver: ' . $bookingOrder->getDriverAddress(),'T',0);
+			
+			$pdf->SetY($AddrY);
+			$pdf->Cell(95,70,'',1,0);
+			$pdf->Cell(0,70,'',1,1);
+	
+			$pdf->Cell(95,10,'Signature:',1,0);
+			$pdf->Cell(0,10,'Signature:',1,1);
+			$pdf->Ln(2);
+			$pdf->SetFont('Arial','B',16);
+			$pdf->Cell(10,5,'',0,0);
+			$pdf->Cell(5,5, chr(187),0,0);
+			$pdf->SetFont('Arial','',10);
+			$pdf->MultiCell(180,5, lang('app.booking.createHelp'),0,1);
+			$EndAddrY = $pdf->GetY();
+			$EndAddrX = $pdf->GetX();
+	
+			$pdf->SetXY($AddrX+33,$AddrY+3);
+			$pdf->Cell(30,30,'Photograph',1,0,'C');
+			$pdf->SetXY($AddrX+128,$AddrY+3);
+			$pdf->Cell(30,30,'Photograph',1,1,'C');
+			$pdf->SetXY($EndAddrX,$EndAddrY);
+			if(!$i){
+				$pdf->Cell(0,10,'',0,1,'C');
+			}
+		}
+		
 
 		
-		$pdf->SetFont('Arial','B',20);
-		$pdf->Cell(5,5,chr(149),0,0);
-		$pdf->SetFont('Arial','B',10);
-		$pdf->Cell(65,5, 'Jetty (Boarding & deboarding point): ',0,0);
-		$pdf->SetFont('Arial','',10);
-		$pdf->MultiCell(120,5, 'Panchanandapur Ferry Ghat Block- Kaliachak II, PS- Mothabari, District-Malda, West Bengal',0,1);
-		$pdf->SetFont('Arial','B',20);
-		$pdf->Cell(5,5,chr(149),0,0);
-		$pdf->SetFont('Arial','B',10);
-		$pdf->MultiCell(190,5, "Do's & Don'ts for Passengers/Travelers",0,1);
-		$pdf->Ln(4);
-		$pdf->Cell(90,5,"Do's",1,0,'C');
-		$pdf->Cell(0,5,"Don'ts",1,1,'C');
-
-		$pdf->SetFont('Arial','',10);
-		$pdf->Cell(90,5,"Board the vessel in proper manner",1,0);
-		$pdf->Cell(0,5,"Don't rush into boat",1,1);
-
-		$pdf->Cell(90,5,"Listen to the Crew",1,0);
-		$pdf->Cell(0,5,"Don't stand/lean dangerously near railing",1,1);
-
-		$pdf->Cell(90,5,"Maintain cleanliness of the boat.",1,0);
-		$pdf->Cell(0,5,"Don't cross the designated zone on the boat.",1,1);
-
-		$pdf->Cell(90,5,"Maintain personal safety",1,0);
-		$pdf->Cell(0,5,"Don't disturb the crew while they are operating",1,1);
-
-		$pdf->Cell(90,5,'',1,0);
-		$pdf->Cell(0,5,"Don't consume alcohol or any such substance onboard.",1,1);
-
-		$pdf->Cell(90,5,'',1,0);
-		$pdf->Cell(0,5,"Don't board the vessel on drunken condition.",1,1);
-
-		$pdf->Cell(90,5,'',1,0);
-		$pdf->Cell(0,5,"Don't throw garbage into the river.",1,1);
-
-		$pdf->Cell(90,5,'',1,0);
-		$pdf->Cell(0,5,"Don't carry any kind inflammable item.",1,1);
-
-		$pdf->Ln(4);
-		$pdf->SetFont('Arial','B',20);
-		$pdf->Cell(5,5,chr(149),0,0);
-		$pdf->SetFont('Arial','',10);
-		$pdf->MultiCell(190,5, "No. of Passengers should not exceed " . env('MAX_PASSENGER'),0,1);
-		$pdf->SetFont('Arial','B',20);
-		$pdf->Cell(5,5,chr(149),0,0);
-		$pdf->SetFont('Arial','',10);
-		$pdf->MultiCell(190,5, "Booked Hours are including boarding and deboarding time",0,1);
-		
-		$pdf->Ln(4);
-		$pdf->SetFont('Arial','B',20);
-		$pdf->Cell(5,5,chr(149),0,0);
-		$pdf->SetFont('Arial','B',10);
-		$pdf->MultiCell(190,5, "Refund Policy",0,1);
-		$pdf->SetFont('Arial','B',16);
-		$pdf->Cell(10,5,'',0,0);
-		$pdf->Cell(5,5, chr(187),0,0);
-		$pdf->SetFont('Arial','',10);
-		$pdf->MultiCell(180,5, "48 hours before scheduled journey - Cancellation charges of Rs.500.00 (Rupees Five hundred) will be applicable.",0,1);
-		
-		$pdf->SetFont('Arial','B',16);
-		$pdf->Cell(10,5,'',0,0);
-		$pdf->Cell(5,5, chr(187),0,0);
-		$pdf->SetFont('Arial','',10);
-		$pdf->MultiCell(180,5, "Between 48 hours and 24 hours before scheduled journey time - 70% refund of the fare.",0,1);
-
-		$pdf->SetFont('Arial','B',16);
-		$pdf->Cell(10,5,'',0,0);
-		$pdf->Cell(5,5, chr(187),0,0);
-		$pdf->SetFont('Arial','',10);
-		$pdf->MultiCell(180,5, "No refund request will be entertained/accepted further.",0,1);
-
-
 
 		$this->response->setHeader('Content-Type', 'application/pdf');
 		$pdf->Output();
