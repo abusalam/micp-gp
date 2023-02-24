@@ -18,15 +18,8 @@ class DatabaseSeeder extends Seeder
 	public function run()
 	{
 		$seeders = [
-			'ClassSeeder',
-			'SubjectSeeder',
-			'SchoolSeeder',
 			'RoleSeeder',
 			'UserSeeder',
-			'TopicSeeder',
-			'AssignmentSeeder',
-			'FileSeeder',
-			'AnswerSeeder',
 			'BookingSeeder',
 		];
 

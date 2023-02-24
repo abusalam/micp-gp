@@ -26,11 +26,11 @@ class RoleSeeder extends Seeder
 			],
 			'passengers' => [
 				'name'        => 'passengers',
-				'description' => 'passenger: books boat tickets.',
+				'description' => 'passenger: books gate passes.',
 			],
 			'operators' => [
 				'name'        => 'operators',
-				'description' => 'operator: Modify or Cancel booked tickets.',
+				'description' => 'operator: Modify or Cancel booked passes.',
 			],
 		];
 

@@ -3,15 +3,23 @@
 
 	<?php \helper('form'); ?>
 	<?php \helper('html'); ?>
-	<div class="modal" id="modal-1" tabindex="-1" role="dialog">
+	<div class="modal" id="driverCam" tabindex="-1" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
-			<h5 class="modal-title">Modal title</h5>
-			<video id="webCam" required="required" name="webCam" autoplay controls></video>
-			<div class="text-right mt-20"> <!-- text-right = text-align: right, mt-20 = margin-top: 2rem (20px) -->
-				<a href="#" class="btn mr-5" role="button">Close</a>
-				<a href="#" class="btn btn-primary" role="button">I understand</a>
+    			<video id="driverWebCam" class="img-fluid" required="required" name="webCam" autoplay controls></video>
+    			<div class="text-right mt-20"> <!-- text-right = text-align: right, mt-20 = margin-top: 2rem (20px) -->
+    				<a href="#" class="btn btn-primary" id="snapDriverPhoto" role="button">Capture</a>
+    			</div>
 			</div>
+		</div>
+	</div>
+	<div class="modal" id="crewCam" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			    <video id="crewWebCam" class="img-fluid" required="required" name="webCam" autoplay controls></video>
+    			<div class="text-right mt-20"> <!-- text-right = text-align: right, mt-20 = margin-top: 2rem (20px) -->
+    				<a href="#" class="btn btn-primary" id="snapCrewPhoto" role="button">Capture</a>
+    			</div>
 			</div>
 		</div>
 	</div>
@@ -64,11 +72,9 @@
 										<div class="content">
 											<div class="form-row row-eq-spacing-md">
 												<div class="col-md-6">
-													<div class="card p-0 m-0 <?php if(session('errors.mobile')) : ?>is-invalid<?php endif ?>" data-toggle="tooltip" data-title="Click to Capture Photo" data-placement="bottom">
-														<a href="#modal-1" role="button">													
-															<canvas id="canvas" width="180" height="200"></canvas>
-														</a>
-													</div>
+													<a href="#driverCam" role="button" data-toggle="tooltip" data-title="Click to Capture Photo" data-placement="bottom">													
+														<canvas id="driverPhoto" class="img-fluid border rounded" width="180" height="200"></canvas>
+													</a>
 												</div>
 												<div class="col-md-6">
 													<div class="form-group <?php if(session('errors.license_no')) : ?>is-invalid<?php endif ?>">
@@ -124,11 +130,9 @@
 										<div class="content">
 											<div class="form-row row-eq-spacing-md">
 												<div class="col-md-6">
-													<div class="card p-0 m-0" data-toggle="tooltip" data-title="Click to Capture Photo" data-placement="bottom">
-														<a href="#modal-1" role="button">													
-															<canvas id="canvas" width="180" height="200"></canvas>
-														</a>
-													</div>
+    												<a href="#crewCam" role="button" data-toggle="tooltip" data-title="Click to Capture Photo" data-placement="bottom">													
+    													<canvas id="crewPhoto" class="img-fluid border rounded" width="180" height="200"></canvas>
+    												</a>
 												</div>
 												<div class="col-md-6">
 													<div class="form-group <?php if(session('errors.crew_mobile')) : ?>is-invalid<?php endif ?>">
@@ -195,54 +199,83 @@
 	<script {csp-script-nonce}>
 	$( function() {
 
-		// Grab elements, create settings, etc.
-		var video = document.getElementById('webCam');
+		//Grab the Webcam Elements
+        var crewVideo = document.getElementById('crewWebCam');
+        var driverVideo = document.getElementById('driverWebCam');
 
 		// Elements for taking the snapshot
-		var canvas = document.getElementById('canvas');
-		var context = canvas.getContext('2d');
+		var driverCanvas = document.getElementById('driverPhoto');
+		var driverContext = driverCanvas.getContext('2d');
+
+		// Elements for taking the snapshot
+		var crewCanvas = document.getElementById('crewPhoto');
+		var crewContext = crewCanvas.getContext('2d');
+		
+        halfmoon.clickHandler = function(event) {
+            var target = event.target;
+            if (target.matches("#driverPhoto")) {
+                // Grab elements, create settings, etc.
+		        console.log("driverWebCam connected");
+        	    // Check if getUserMedia is supported
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    // Get video stream from webcam
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(s => {
+                        stream = s;
+                        driverVideo.srcObject = stream;
+                        driverVideo.play();
+                    })
+                    .catch(error => console.log(error));
+                } else {
+                    // getUserMedia not supported
+                    console.log("getUserMedia not supported");
+                }
+            }
+              
+            if (target.matches("#crewPhoto")) {
+                // Grab elements, create settings, etc.
+		        console.log("crewWebCam connected");
+        	    // Check if getUserMedia is supported
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    // Get video stream from webcam
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(s => {
+                        stream = s;
+                        crewVideo.srcObject = stream;
+                        crewVideo.play();
+                    })
+                    .catch(error => console.log(error));
+                } else {
+                    // getUserMedia not supported
+                    console.log("getUserMedia not supported");
+                }
+            }
+
+            };
+            
 
 		// Trigger photo take
-		document.getElementById("snap").addEventListener("click", function() {
-			context.drawImage(video, 0, 0, 320, 240);
+		document.getElementById("snapCrewPhoto").addEventListener("click", function() {
+			crewContext.drawImage(crewVideo, 0, 0, 180, 200);
 			//alert(canvas.toDataURL("image/png"));
-			if (video.paused) 
-				video.play(); 
-			else {
-				video.srcObject.getTracks().forEach(function(track) {
-					if (track.readyState == 'live') {
-						track.stop();
-					}
-				});;
-			}
-		});
-		// Get access to the camera!
-		if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-			// Not adding `{ audio: true }` since we only want video now
-			navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-				//video.src = window.URL.createObjectURL(stream);
-				video.srcObject = stream;
-				video.play();
+			crewVideo.srcObject.getTracks().forEach(function(track) {
+				if (track.readyState == 'live') {
+					track.stop();
+				}
 			});
-		}
+		});
+        
+		// Trigger photo take
+		document.getElementById("snapDriverPhoto").addEventListener("click", function() {
+			driverContext.drawImage(driverVideo, 0, 0, 180, 200);
+			//alert(canvas.toDataURL("image/png"));
+			driverVideo.srcObject.getTracks().forEach(function(track) {
+				if (track.readyState == 'live') {
+					track.stop();
+				}
+			});
+		});
 
-		/* Legacy code below: getUserMedia */
-		else if(navigator.getUserMedia) { // Standard
-			navigator.getUserMedia({ video: true }, function(stream) {
-				video.src = stream;
-				video.play();
-			}, errBack);
-		} else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
-			navigator.webkitGetUserMedia({ video: true }, function(stream){
-				video.src = window.webkitURL.createObjectURL(stream);
-				video.play();
-			}, errBack);
-		} else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
-			navigator.mozGetUserMedia({ video: true }, function(stream){
-				video.srcObject = stream;
-				video.play();
-			}, errBack);
-		}
 
 		$( "#date" ).datepicker({
       showOtherMonths: true,
