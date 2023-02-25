@@ -52,8 +52,8 @@
 									</div>
 									<div class="col-md-6">
 										<div class="form-group <?php if(session('errors.purpose')) : ?>is-invalid<?php endif ?>">
-											<label for="purpose" class="required"><?=lang('app.booking.purpose')?></label>
-											<input type="text" class="form-control" id="purpose" required="required"
+											<label for="purpose"><?=lang('app.booking.purpose')?></label>
+											<input type="text" class="form-control" id="purpose" 
 													name="purpose" placeholder="<?=lang('app.booking.purpose')?>"
 													value="<?=old('purpose', $booking->purpose) ?>">
 										</div>
@@ -138,16 +138,16 @@
 												</div>
 												<div class="col-md-6">
 													<div class="form-group <?php if(session('errors.crew_mobile')) : ?>is-invalid<?php endif ?>">
-														<label for="crew_mobile" class="required"><?=lang('app.booking.crewMobile')?></label>
-														<input type="text" class="form-control" id="crew_mobile" required="required"
+														<label for="crew_mobile"><?=lang('app.booking.crewMobile')?></label>
+														<input type="text" class="form-control" id="crew_mobile" 
 																	name="crew_mobile" placeholder="<?=lang('app.booking.crewMobile')?>"
 																	value="<?=old('crew_mobile', $booking->crew_mobile) ?>">
 													</div>
 													<div class="form-group <?php if(session('errors.crew_name')) : ?>is-invalid<?php endif ?>">
-														<label for="crew_name" class="required">
+														<label for="crew_name" >
 															<?=lang('app.booking.crewName')?>
 														</label>
-														<input type="text" class="form-control" id="crew_name" required="required"
+														<input type="text" class="form-control" id="crew_name" 
 																name="crew_name" placeholder="<?=lang('app.booking.crewName')?>"
 																value="<?=old('crew_name', $booking->crew_name) ?>">
 													</div>
@@ -156,8 +156,8 @@
 											<div class="form-row row-eq-spacing-md">
 												<div class="col-md-6">
 												<div class="form-group <?php if(session('errors.crew_id_type')) : ?>is-invalid<?php endif ?>">
-														<label for="crew_id_type" class="required"><?=lang('app.booking.crewIdCardType')?></label>
-														<input type="text" class="form-control" id="crew_id_type" required="required"
+														<label for="crew_id_type"><?=lang('app.booking.crewIdCardType')?></label>
+														<input type="text" class="form-control" id="crew_id_type" 
 																name="crew_id_type" placeholder="<?=lang('app.booking.crewIdCardType')?>"
 																value="<?=old('crew_id_type', $booking->crew_id_type) ?>">
 													</div>
@@ -165,10 +165,10 @@
 												</div>
 												<div class="col-md-6">
 													<div class="form-group <?php if(session('errors.crew_id_no')) : ?>is-invalid<?php endif ?>">
-														<label for="crew_id_no" class="required">
+														<label for="crew_id_no">
 															<?=lang('app.booking.crewIdCardNo')?>
 														</label>
-														<input type="text" class="form-control" id="crew_id_no" required="required"
+														<input type="text" class="form-control" id="crew_id_no" 
 																name="crew_id_no" placeholder="<?=lang('app.booking.crewIdCardNo')?>"
 																value="<?=old('crew_id_no', $booking->crew_id_no) ?>">
 													</div>
@@ -176,8 +176,8 @@
 												</div>													
 											</div>
 											<div class="form-group <?php if(session('errors.crew_address')) : ?>is-invalid<?php endif ?>" >
-												<label for="crew_address" class="required"><?=lang('app.booking.crewAddress')?></label>
-												<input type="text" class="form-control" id="crew_address" required="required"
+												<label for="crew_address"><?=lang('app.booking.crewAddress')?></label>
+												<input type="text" class="form-control" id="crew_address" 
 														name="crew_address" placeholder="<?=lang('app.booking.crewAddress')?>"
 														value="<?=old('crew_address', $booking->crew_address) ?>">
 											</div>

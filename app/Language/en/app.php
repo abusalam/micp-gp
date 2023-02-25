@@ -196,6 +196,7 @@
 			'notFound'        => 'Booking Not Found.',
 			'searchTitle'     => 'Search Ticket',
 			'searchHelp'      => 'Ticket No. is available on the booking receipt.',
-			'ticket'          => 'Ticket No.',
+			'validFrom'       => 'Valid from',
+			'validTill'       => 'Valid till',
 		],
 	];

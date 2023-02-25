@@ -37,6 +37,11 @@ class Booking extends Entity
 		return $this->attributes['vehicle_no'] ?? '';
 	}
 
+	public function getPurpose()
+	{
+		return $this->attributes['purpose'] ?? '';
+	}
+
 	public function getDriverName()
 	{
 		return $this->attributes['driver_name'] ?? '';

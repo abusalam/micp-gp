@@ -83,6 +83,8 @@ class BookingModel extends Model
 		'crew_mobile',
 		'crew_address',
 		'crew_photo',
+		'issued_on',
+		'valid_till',
 	];
 
 	/**
@@ -183,12 +185,15 @@ class BookingModel extends Model
 	 * @var array
 	 */
 	protected $validationRules = [
-		'vehicle_no' => 'required|string|max_length[10]',
-		'license_no' => 'required|string|max_length[50]',
-		'driver_name' => 'required|string|max_length[100]',
-		'driver_mobile'    => 'required|integer|is_natural_no_zero|exact_length[10]',
-		'driver_address'   => 'required|string|max_length[255]',
-		'purpose'   => 'required|string|max_length[255]',
+		'vehicle_no'     => 'required|string|max_length[10]',
+		'license_no'     => 'required|string|max_length[50]',
+		'driver_name'    => 'required|string|max_length[100]',
+		'driver_mobile'  => 'required|integer|is_natural_no_zero|exact_length[10]',
+		'driver_address' => 'required|string|max_length[255]',
+		'purpose'        => 'string|max_length[255]',
+		'crew_name'      => 'string|max_length[100]',
+		'crew_mobile'    => 'integer|is_natural_no_zero|exact_length[10]',
+		'crew_address'   => 'string|max_length[255]',
 	];
 
 	//protected $beforeInsert = ['setBookingDate'];
