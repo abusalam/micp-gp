@@ -16,7 +16,7 @@
 					</h2>
 					<div class="card-body">
 						<?= view('Myth\Auth\Views\_message_block') ?>
-						<a href="<?=base_url(route_to('print', $id))?>" class="btn btn-success btn-lg">Print Receipt</a>
+						<a href="<?=base_url(route_to('print', $id))?>" target="_blank" class="btn btn-success btn-lg">Print Receipt</a>
 					</div>
 				</div>
 

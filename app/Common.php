@@ -15,4 +15,4 @@
  */
 
 define('APP_TITLE', 'Gate Pass');
-define('VERSION', 'v0.0.1');
+define('VERSION', 'v0.1.1');

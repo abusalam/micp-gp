@@ -30,9 +30,6 @@ class Users extends Migration
 		];
 
 		$this->forge->addColumn('users', $fields);
-
-		// TODO: Not Supported till CI 4.0.4
-		//$this->forge->addForeignKey('school_id', 'schools', 'id', false, 'CASCADE');
 		$usersTable    = $this->db->prefixTable('users');
 	}
 
@@ -45,12 +42,6 @@ class Users extends Migration
 	 */
 	public function down()
 	{
-		// drop constraints first to prevent errors
-		// if ($this->db->DBDriver !== 'SQLite3')
-		// {
-		// 	$this->forge->dropForeignKey('schools', 'schools_school_id_foreign');
-		// }
-
 		$this->forge->dropColumn('users', 'mobile');
 		$this->forge->dropColumn('users', 'full_name');
 		$this->forge->dropColumn('users', 'description');
