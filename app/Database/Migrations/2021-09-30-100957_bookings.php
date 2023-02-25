@@ -89,7 +89,6 @@ class Bookings extends Migration
 		];
 		$this->forge->addField($bookings);
 		$this->forge->addKey('id', true);
-		//$this->forge->addUniqueKey('ticket');
 		$this->forge->createTable('bookings', true);
 	}
 
@@ -97,25 +96,6 @@ class Bookings extends Migration
 
 	public function down()
 	{
-		// drop constraints first to prevent errors
-		if ($this->db->DBDriver !== 'SQLite3')
-		{
-			// $this->forge->dropForeignKey('classes_users', 'classes_users_class_id_foreign');
-			// $this->forge->dropForeignKey('classes_users', 'classes_users_user_id_foreign');
-			// $this->forge->dropForeignKey('topics', 'topics_class_id_foreign');
-			// $this->forge->dropForeignKey('topics', 'topics_subject_id_foreign');
-			// $this->forge->dropForeignKey('files', 'files_user_id_foreign');
-			// $this->forge->dropForeignKey('assignment_files', 'assignment_files_assignment_id_foreign');
-			// $this->forge->dropForeignKey('assignment_files', 'assignment_files_file_id_foreign');
-			// $this->forge->dropForeignKey('assignments', 'assignments_topic_id_foreign');
-			// $this->forge->dropForeignKey('assignments', 'assignments_user_id_foreign');
-			// $this->forge->dropForeignKey('answer_files', 'answer_files_answer_id_foreign');
-			// $this->forge->dropForeignKey('answer_files', 'answer_files_file_id_foreign');
-			// $this->forge->dropForeignKey('answer_files', 'answer_files_user_id_foreign');
-			// $this->forge->dropForeignKey('answers', 'answers_assignment_id_foreign');
-			// $this->forge->dropForeignKey('answers', 'answers_user_id_foreign');
-		}
-
 		$this->forge->dropTable('bookings', true);
 	}
 }

@@ -74,6 +74,7 @@
 												<div class="col-md-6">
 													<a href="#driverCam" role="button" data-toggle="tooltip" data-title="Click to Capture Photo" data-placement="bottom">													
 														<canvas id="driverPhoto" class="img-fluid border rounded" width="180" height="200"></canvas>
+														<input type="hidden" name="driver_photo" id="driverCanvasData">
 													</a>
 												</div>
 												<div class="col-md-6">
@@ -132,6 +133,7 @@
 												<div class="col-md-6">
     												<a href="#crewCam" role="button" data-toggle="tooltip" data-title="Click to Capture Photo" data-placement="bottom">													
     													<canvas id="crewPhoto" class="img-fluid border rounded" width="180" height="200"></canvas>
+														<input type="hidden" name="crew_photo" id="crewCanvasData">
     												</a>
 												</div>
 												<div class="col-md-6">
@@ -184,9 +186,9 @@
 									</div>
 								</div>
 								</div>
-								<pre id="debug"><?php //var_dump($booking->getTimeSlots() ?? '')?></pre>
+								<pre id="debug"><?php var_dump($booking ?? '')?></pre>
 							</fieldset>
-							<button type="submit" class="btn btn-primary btn-block form-control"><?=lang('app.booking.btnCreateTitle')?></button>
+							<button type="submit" id="saveGatePass" class="btn btn-primary btn-block form-control"><?=lang('app.booking.btnCreateTitle')?></button>
 						<?=form_close()?>
 
 					</div>
@@ -203,6 +205,9 @@
         var crewVideo = document.getElementById('crewWebCam');
         var driverVideo = document.getElementById('driverWebCam');
 
+		const crewCanvasData = document.getElementById('crewCanvasData');
+		const driverCanvasData = document.getElementById('driverCanvasData');
+
 		// Elements for taking the snapshot
 		var driverCanvas = document.getElementById('driverPhoto');
 		var driverContext = driverCanvas.getContext('2d');
@@ -210,6 +215,17 @@
 		// Elements for taking the snapshot
 		var crewCanvas = document.getElementById('crewPhoto');
 		var crewContext = crewCanvas.getContext('2d');
+
+		// Draw on canvas when camera is not available
+		var drawNoPhoto = function(canvas){
+			var ctx=canvas.getContext("2d");
+			ctx.font="30px Comic Sans MS";
+			ctx.fillStyle = ctx.fillStyle = "#" + Math.floor(Math.random()*16777215).toString(16);
+			ctx.fillRect(0,0,canvas.width,canvas.height);
+			ctx.fillStyle = ctx.fillStyle = "#" + Math.floor(Math.random()*16777215).toString(16);
+			ctx.textAlign = "center";
+			ctx.fillText("No Photo", canvas.width/2, canvas.height/2);
+		};
 		
         halfmoon.clickHandler = function(event) {
             var target = event.target;
@@ -251,30 +267,57 @@
                 }
             }
 
-            };
+			if (target.matches("#snapDriverPhoto")) {
+				if(!driverVideo.srcObject) {
+					drawNoPhoto(driverCanvas);
+				} else {
+					driverContext.drawImage(driverVideo, 0, 0, 180, 200);
+					//alert(canvas.toDataURL("image/png"));
+					driverVideo.srcObject.getTracks().forEach(function(track) {
+						if (track.readyState == 'live') {
+							track.stop();
+						}
+					});
+				}
+			}
+
+			if (target.matches("#snapCrewPhoto")) {
+				if(!crewVideo.srcObject) {
+					drawNoPhoto(crewCanvas);
+				} else {
+					crewContext.drawImage(crewVideo, 0, 0, 180, 200);
+					//alert(canvas.toDataURL("image/png"));
+					crewVideo.srcObject.getTracks().forEach(function(track) {
+						if (track.readyState == 'live') {
+							track.stop();
+						}
+					});
+				}
+			}
+
+			if (target.matches("#saveGatePass")) {
+				const driverDataUrl = driverCanvas.toDataURL();
+				const isValidDriverImage = /^data:image\/(png|jpeg|gif);base64,/.test(driverDataUrl);
+
+				if (!isValidDriverImage) {
+					alert("Error: Driver photo not captured!");
+					event.preventDefault();
+				}
+				const crewDataUrl = crewCanvas.toDataURL();
+				const isValidCrewImage = /^data:image\/(png|jpeg|gif);base64,/.test(crewDataUrl);
+
+				if (!isValidCrewImage) {
+					alert("Error: Crew photo not captured!");
+					event.preventDefault();
+				}
+
+				driverCanvasData.value = driverDataUrl;
+				crewCanvasData.value = crewDataUrl;
+			}
+
+		};
             
 
-		// Trigger photo take
-		document.getElementById("snapCrewPhoto").addEventListener("click", function() {
-			crewContext.drawImage(crewVideo, 0, 0, 180, 200);
-			//alert(canvas.toDataURL("image/png"));
-			crewVideo.srcObject.getTracks().forEach(function(track) {
-				if (track.readyState == 'live') {
-					track.stop();
-				}
-			});
-		});
-        
-		// Trigger photo take
-		document.getElementById("snapDriverPhoto").addEventListener("click", function() {
-			driverContext.drawImage(driverVideo, 0, 0, 180, 200);
-			//alert(canvas.toDataURL("image/png"));
-			driverVideo.srcObject.getTracks().forEach(function(track) {
-				if (track.readyState == 'live') {
-					track.stop();
-				}
-			});
-		});
 
 
 		$( "#date" ).datepicker({

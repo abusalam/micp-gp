@@ -114,14 +114,13 @@ class BookingController extends BaseController
 		$newBooking   = new Booking();
 		$newBooking->fill($this->request->getPost());
 		session()->set('post_data', $this->request->getPost());
-		//$newBooking->setPassValidity();
+		$newBooking->setPassValidity();
 
 		if (! $bookingModel->save($newBooking))
 		{
 			return redirect()->back()->withInput()->with('errors', $bookingModel->errors());
 		}
 
-		$parser = \Config\Services::parser();
 		$data   = [
 			'id'    => $bookingModel->getInsertID(),
 		];
@@ -198,9 +197,11 @@ class BookingController extends BaseController
 			$EndAddrX = $pdf->GetX();
 	
 			$pdf->SetXY($AddrX+33,$AddrY+3);
-			$pdf->Cell(30,30,'Photograph',1,0,'C');
+			//$pdf->Cell(30,30,'Photograph',1,0,'C');
+			$pdf->Image('data://text/plain;base64,' . $bookingOrder->getBase64ImageData('driver_photo'), null,null,30,30,'png');
 			$pdf->SetXY($AddrX+128,$AddrY+3);
-			$pdf->Cell(30,30,'Photograph',1,1,'C');
+			//$pdf->Cell(30,30,'Photograph',1,1,'C');
+			$pdf->Image('data://text/plain;base64,' . $bookingOrder->getBase64ImageData('crew_photo'), null,null,30,30,'png');
 			$pdf->SetXY($EndAddrX,$EndAddrY);
 			if(!$i){
 				$pdf->Cell(0,10,'',0,1,'C');
@@ -255,33 +256,4 @@ class BookingController extends BaseController
 		return view('Booking/search-form', $data);
 	}
 
-
-	public function makeRefund(int $id)
-	{
-		$found = model('BookingModel')->find($id);
-		if (! $found)
-		{
-			return redirect()->to(base_url(route_to('create-booking')))
-					->with('error', lang('app.assignment.notFound'));
-		}
-		$client = new Client(['base_uri' => env('PG_URI')]);
-		$requestBody = [
-			'refund_amount' => $found->amount,
-			'refund_id'     => 'R' . $found->getOrderID(),
-			'refund_note'   => $found->getBookedSlot(),
-		];
-
-		$response = $client->request('POST', 'orders/' . $found->getOrderID() . '/refunds', [
-			'body' => json_encode($requestBody),//'{"customer_details":{"customer_id":"9876543210","customer_email":"john@example.com","customer_phone":"9876543210"},"order_expiry_time":"2022-02-15T00:00:00Z","order_amount":10.15,"order_currency":"INR"}',
-			'headers' => [
-				'Accept' => 'application/json',
-				'Content-Type' => 'application/json',
-				'x-api-version' => '2022-01-01',
-				'x-client-id' => env('PG_APP_ID'),
-				'x-client-secret' => env('PG_SECRET'),
-			],
-		]);
-
-		$data['pg_resp'] = json_decode($response->getBody());
-	}
 }
