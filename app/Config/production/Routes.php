@@ -90,6 +90,12 @@ if (session('has_no_profile')) {
 			$routes->post('ticket', 'BookingController::getBookingsByRef', [
 				'as' => 'search',
 				]);
+			$routes->post('driver', 'BookingController::getDriverDetails', [
+				'as' => 'driver-search',
+				]);
+			$routes->post('crew', 'BookingController::getCrewDetails', [
+				'as' => 'crew-search',
+				]);
 		}
 	);
 

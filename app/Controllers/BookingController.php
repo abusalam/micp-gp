@@ -224,17 +224,30 @@ class BookingController extends BaseController
 		return view('Booking/check-form', $data);
 	}
 
-	public function getBookingsByDate()
+	public function getDriverDetails()
 	{
 		$bookingModel = new BookingModel();
 		
-		$bookings = $bookingModel->where('booking_date', $this->request->getVar('date'))
-		->where('status', 'SUCCESS')
-		->findAll();
-		$data['bookings'] = $bookings;
+		$bookings = $bookingModel->select('driver_name,driver_mobile,driver_address')
+						->where('license_no', $this->request->getVar('license_no'))
+						->first();
+
 		//$data['csrf_token'] = $this->security->get_csrf_hash();
 		$this->response->setHeader('Content-Type', 'application/json');
-		echo json_encode($data);
+		echo json_encode($bookings);
+	}
+
+	public function getCrewDetails()
+	{
+		$bookingModel = new BookingModel();
+		
+		$bookings = $bookingModel->select('crew_name,crew_id_type,crew_id_no,crew_address')
+						->where('crew_mobile', $this->request->getVar('crew_mobile'))
+						->first();
+
+		//$data['csrf_token'] = $this->security->get_csrf_hash();
+		$this->response->setHeader('Content-Type', 'application/json');
+		echo json_encode($bookings);
 	}
 
 	public function showTicketSearch()

@@ -316,9 +316,45 @@
 			}
 
 		};
-            
+        
+		$("#license_no").blur(function() {
+			$.ajax({
+				method: "POST",
+				url: "<?=base_url(route_to('driver-search'))?>",
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+				data: {
+						'license_no': $("#license_no").val(),
+						//'csrf_test_name' : $("[name='csrf_test_name']").val(),
+					},
+			}).done(function(resp){
+				//$("#debug").text(JSON.stringify(resp));
+				if(resp) {
+					$("#driver_name").val(resp.driver_name);
+					$("#driver_mobile").val(resp.driver_mobile);
+					$("#driver_address").val(resp.driver_address);
+				}
+			});
+		});
 
-
+		$("#crew_mobile").blur(function() {
+			$.ajax({
+				method: "POST",
+				url: "<?=base_url(route_to('crew-search'))?>",
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+				data: {
+						'crew_mobile': $("#crew_mobile").val(),
+						//'csrf_test_name' : $("[name='csrf_test_name']").val(),
+					},
+			}).done(function(resp){
+				//$("#debug").text(JSON.stringify(resp));
+				if(resp) {
+					$("#crew_name").val(resp.crew_name);
+					$("#crew_id_type").val(resp.crew_id_type);
+					$("#crew_id_no").val(resp.crew_id_no);
+					$("#crew_address").val(resp.crew_address);
+				}
+			});
+		});
 
 		$( "#date" ).datepicker({
       showOtherMonths: true,
