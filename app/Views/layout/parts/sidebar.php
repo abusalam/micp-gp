@@ -38,16 +38,23 @@
 		<a href="<?= base_url(route_to('create-booking'))?>"
 			class="sidebar-link sidebar-link-with-icon <?= add_class('create-booking')?>">
 			<span class="sidebar-icon">
-				<i class="fa fa-ship" aria-hidden="true"></i>
+				<i class="fa fa-road" aria-hidden="true"></i>
 			</span>
 			<?=lang('app.menu.booking')?>
 		</a>
-		<a href="<?= base_url(route_to('profile'))?>"
-			class="sidebar-link sidebar-link-with-icon <?= add_class('profile')?>">
+		<a href="<?= base_url(route_to('create-blacklist'))?>"
+			class="sidebar-link sidebar-link-with-icon <?= add_class('create-blacklist')?>">
 			<span class="sidebar-icon">
-				<i class="fa fa-user" aria-hidden="true"></i>
+				<i class="fa fa-id-card-o" aria-hidden="true"></i>
 			</span>
-			<?=lang('app.menu.updateProfile')?>
+			<?=lang('app.menu.blacklist')?>
+		</a>
+		<a href="<?= base_url(route_to('reports'))?>"
+			class="sidebar-link sidebar-link-with-icon <?= add_class('reports')?>">
+			<span class="sidebar-icon">
+				<i class="fa fa-print" aria-hidden="true"></i>
+			</span>
+			<?=lang('app.booking.reports')?>
 		</a>
 		<a href="<?= base_url(route_to('logout'))?>"
 			class="sidebar-link sidebar-link-with-icon">

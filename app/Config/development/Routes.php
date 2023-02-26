@@ -38,7 +38,7 @@ if (session('has_no_profile')) {
 		'as'     => 'profile',
 		'filter' => 'login'
 		]);
-	
+
 	// Bookings Route Group
 	$routes->group(
 		'booking',
@@ -84,11 +84,11 @@ if (session('has_no_profile')) {
 			$routes->post('check', 'BookingController::getBookingsByDate', [
 				'as' => 'check',
 				]);
-			$routes->get('ticket', 'BookingController::showTicketSearch', [
-				'as' => 'search',
+			$routes->get('reports', 'BookingController::showTicketSearch', [
+				'as' => 'reports',
 				]);
-			$routes->post('ticket', 'BookingController::getBookingsByRef', [
-				'as' => 'search',
+			$routes->post('reports', 'BookingController::getBookingsByRef', [
+				'as' => 'reports',
 				]);
 
 			$routes->post('driver', 'BookingController::getDriverDetails', [
@@ -100,4 +100,36 @@ if (session('has_no_profile')) {
 		}
 	);
 
+		// Blacklists Route Group
+		$routes->group(
+			'blacklist',
+			[
+				'namespace' => 'App\Controllers',
+				'filter' => 'login'
+			],
+			function($routes) {
+				
+				// List of All Blacklists
+				$routes->get('', 'BlacklistController::index', [
+					'as' => 'view-blacklists',
+					]);
+		
+        // Enable Blacklisted Vehicle No / DL No
+        $routes->get('(:num)/enable', 'BlacklistController::enable/$1', [
+          'as' => 'lock-assignment',
+          ]);
+
+        // Disable Blacklisted Vehicle No / DL No
+        $routes->get('(:num)/enable', 'BlacklistController::disable/$1', [
+          'as' => 'lock-assignment',
+          ]);
+          
+        $routes->get('new', 'BlacklistController::showBlacklistForm', [
+          'as' => 'create-blacklist',
+          ]);
+        $routes->post('new', 'BlacklistController::tryToBlacklist', [
+          'as' => 'create-blacklist',
+          ]);
+			}
+		);
 }

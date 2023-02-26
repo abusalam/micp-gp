@@ -16,15 +16,15 @@ use App\Models\SchoolModel;
  */
 class SchoolSeeder extends Seeder
 {
-	public function run()
-	{
-		$fabricator     = new Fabricator(SchoolModel::class);
-		$newSchools     = $fabricator->make(2);
-		$newSchoolModel = new SchoolModel();
+  public function run()
+  {
+    $fabricator     = new Fabricator(SchoolModel::class);
+    $newSchools     = $fabricator->make(2);
+    $newSchoolModel = new SchoolModel();
 
-		foreach ($newSchools as $school)
-		{
-			$newSchoolModel->save($school);
-		}
-	}
+    foreach ($newSchools as $school)
+    {
+      $newSchoolModel->save($school);
+    }
+  }
 }
