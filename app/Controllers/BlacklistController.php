@@ -10,37 +10,37 @@ use FPDF;
 
 class BlacklistController extends BaseController
 {
-    public function index()
-    {
-      helper('inflector');
-      $blacklistModel = model('BlacklistModel');
+  public function index()
+  {
+    helper('inflector');
+    $blacklistModel = model('BlacklistModel');
 
-      $blacklists = $blacklistModel->asArray()
-        ->select('id,blacklist_no,reason')
-        ->where('status','enabled')
-        ->orderBy('updated_at', 'DESC')
-        ->paginate();
+    $blacklists = $blacklistModel->asArray()
+      ->select('id,blacklist_no,reason')
+      ->where('status','enabled')
+      ->orderBy('updated_at', 'DESC')
+      ->paginate();
 
-      //dd($blacklists);
-      // Define the Table Heading
-      $_SESSION['heads'] = [
-        'id'           => 'ID#',
-        'blacklist_no' => lang('app.blacklist.blacklist'),
-        'reason'       => lang('app.blacklist.reasonTitle'),
-      ];
+    //dd($blacklists);
+    // Define the Table Heading
+    $_SESSION['heads'] = [
+      'id'           => 'ID#',
+      'blacklist_no' => lang('app.blacklist.blacklist'),
+      'reason'       => lang('app.blacklist.reasonTitle'),
+    ];
 
-      $data = [
-        'heads' => $_SESSION['heads'],
-        'rows'  => $blacklists,
-        'pager' => $blacklistModel->pager,
-      ];
+    $data = [
+      'heads' => $_SESSION['heads'],
+      'rows'  => $blacklists,
+      'pager' => $blacklistModel->pager,
+    ];
 
-      unset($_SESSION['heads']);
+    unset($_SESSION['heads']);
 
-      $data['config'] = $this->config;
+    $data['config'] = $this->config;
 
-      return view('Blacklist/list-form', $data);
-    }
+    return view('Blacklist/list-form', $data);
+  }
 
   public function showBlacklistForm()
   {
@@ -79,5 +79,16 @@ class BlacklistController extends BaseController
     }
   }
 
+  public function check()
+  {
+    $blacklistModel = new BlacklistModel();
+    
+    $blacklists = $blacklistModel->select('id,blacklist_no,reason,status')
+            ->where('blacklist_no', $this->request->getVar('blacklist_no'))
+            ->first();
 
+    //$data['csrf_token'] = $this->security->get_csrf_hash();
+    $this->response->setHeader('Content-Type', 'application/json');
+    echo json_encode($blacklists);
+  }
 }

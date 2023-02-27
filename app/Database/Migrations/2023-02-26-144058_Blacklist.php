@@ -44,6 +44,7 @@ class Blacklist extends Migration
     ];
     $this->forge->addField($blacklists);
     $this->forge->addKey('id', true);
+    $this->forge->addUniqueKey('blacklist_no');
     $this->forge->createTable('blacklists', true);
     }
 

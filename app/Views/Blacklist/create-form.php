@@ -38,9 +38,9 @@
                   </div>
                 </div>
                 <pre id="debug"><?php //var_dump($blacklist ?? '')?></pre>
-                        <button type="submit" class="btn btn-danger"  disabled="disabled"><?=lang('app.blacklist.btnAddTitle')?></button>
-                        <button type="submit" class="btn btn-success" disabled="disabled"><?=lang('app.blacklist.btnRemoveTitle')?></button>
-                        <a href="<?=base_url(route_to('view-blacklists'))?>" class="btn btn-primary"><?=lang('app.blacklist.btnListTitle')?></a>
+                <button type="submit" class="btn btn-danger" id="saveBlacklist" name="action"><?=lang('app.blacklist.btnAddTitle')?></button>
+                <a href="<?=base_url(route_to('view-blacklists'))?>" class="btn btn-primary"><?=lang('app.blacklist.btnRemoveTitle')?></a>
+                <a href="<?=base_url(route_to('view-blacklists'))?>" class="btn btn-primary"><?=lang('app.blacklist.btnListTitle')?></a>
               </fieldset>
             <?=form_close()?>
 
@@ -50,4 +50,64 @@
       </div>
     </div>
   </div>
+  <script {csp-script-nonce}>
+    $( function() {     
+      halfmoon.clickHandler = function(event) {
+        var target = event.target;
+      };
+          
+      $("#blacklist_no").blur(function() {
+        $.ajax({
+          method: "POST",
+          url: "<?=base_url(route_to('check-blacklist'))?>",
+          headers: {'X-Requested-With': 'XMLHttpRequest'},
+          data: {
+              'blacklist_no': $("#blacklist_no").val(),
+              //'csrf_test_name' : $("[name='csrf_test_name']").val(),
+            },
+        }).done(function(resp){
+          $("#debug").text(JSON.stringify(resp));
+          if(resp){
+            switch(resp.status)
+            {
+              case 'enabled':
+                alert("Already Blacklisted");
+                $("#saveBlacklist").val("<?=lang('app.blacklist.btnRemoveTitle')?>");
+                $("#saveBlacklist").text("<?=lang('app.blacklist.btnRemoveTitle')?>");
+              break;
+              case 'disabled':
+                alert("Removed from Blacklist");
+                $("#saveBlacklist").val("<?=lang('app.blacklist.btnAddTitle')?>");
+                $("#saveBlacklist").text("<?=lang('app.blacklist.btnAddTitle')?>");
+              break;
+            }
+          }
+        });
+      });
+
+      $( "#date" ).datepicker({
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        changeMonth: true,
+        minDate: 0, 
+        maxDate: "+2M",
+        dateFormat: 'dd/mm/yy',
+        onSelect: function(date, ui){
+          $.ajax({
+              method: "POST",
+              url: "<?=base_url(route_to('check'))?>",
+              headers: {'X-Requested-With': 'XMLHttpRequest'},
+              data: {
+                'date': date,
+                //'csrf_test_name' : $("[name='csrf_test_name']").val(),
+              },
+            }).done(function(resp){
+              //$("#debug").text(resp);
+            });
+          
+        },
+      });
+      
+    });
+  </script>
 <?= $this->endSection() ?>

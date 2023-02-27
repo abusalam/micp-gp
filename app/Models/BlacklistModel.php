@@ -28,7 +28,9 @@ class BlacklistModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+      'blacklist_no' => 'required|is_unique[blacklists.blacklist_no]',
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
