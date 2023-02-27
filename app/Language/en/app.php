@@ -210,6 +210,6 @@
 			'btnRemoveTitle'  => 'Remove from Blacklist',
 			'btnListTitle'    => 'Show Blacklist',
 			'addSuccess'      => 'Vehicle No / DL No: <b>{blacklist_no}</b> has been blacklisted successfully.',
-			'removeSuccess'   => 'Vehicle No / DL No: <b>{blacklist_no}</b> has been removed from blacklis successfully.',
+			'removeSuccess'   => 'Vehicle No / DL No: <b>{blacklist_no}</b> has been removed from blacklist successfully.',
 		],
 	];

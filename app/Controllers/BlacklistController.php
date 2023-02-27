@@ -91,4 +91,46 @@ class BlacklistController extends BaseController
     $this->response->setHeader('Content-Type', 'application/json');
     echo json_encode($blacklists);
   }
+  public function enable($id)
+  {
+    $blacklistModel = new BlacklistModel();
+    
+    $blacklist = $blacklistModel->find($id);
+    $blacklist->enable();
+    if (! $blacklistModel->save($blacklist))
+		{
+			return redirect()->back()->withInput()->with('errors', $blacklistModel->errors());
+		}
+		$parser = \Config\Services::parser();
+		$data   = [
+			'blacklist_no' => $blacklist->getBlacklistNo(),
+		];
+		return redirect()->to(base_url(route_to('create-blacklist')))
+							->with(
+								'message',
+								$parser->setData($data)
+								->renderString(lang('app.blacklist.addSuccess'))
+							);
+  }
+  public function disable($id)
+  {
+    $blacklistModel = new BlacklistModel();
+    
+    $blacklist = $blacklistModel->find($id);
+    $blacklist->disable();
+    if (! $blacklistModel->save($blacklist))
+		{
+			return redirect()->back()->withInput()->with('errors', $blacklistModel->errors());
+		}
+		$parser = \Config\Services::parser();
+		$data   = [
+			'blacklist_no' => $blacklist->getBlacklistNo(),
+		];
+		return redirect()->to(base_url(route_to('create-blacklist')))
+							->with(
+								'message',
+								$parser->setData($data)
+								->renderString(lang('app.blacklist.removeSuccess'))
+							);
+  }
 }

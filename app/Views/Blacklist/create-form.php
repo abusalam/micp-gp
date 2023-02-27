@@ -66,19 +66,21 @@
               //'csrf_test_name' : $("[name='csrf_test_name']").val(),
             },
         }).done(function(resp){
-          $("#debug").text(JSON.stringify(resp));
+          //$("#debug").text(JSON.stringify(resp));
           if(resp){
             switch(resp.status)
             {
               case 'enabled':
-                alert("Already Blacklisted");
-                $("#saveBlacklist").val("<?=lang('app.blacklist.btnRemoveTitle')?>");
-                $("#saveBlacklist").text("<?=lang('app.blacklist.btnRemoveTitle')?>");
+                if(confirm("Do you want to remove it from blacklist?"))
+                {
+                  location.href ="<?=getenv('app.baseURL')?>" + "blacklist/" + resp.id + "/disable";
+                }
               break;
               case 'disabled':
-                alert("Removed from Blacklist");
-                $("#saveBlacklist").val("<?=lang('app.blacklist.btnAddTitle')?>");
-                $("#saveBlacklist").text("<?=lang('app.blacklist.btnAddTitle')?>");
+                if(confirm("Do you want to add it to blacklist again?"))
+                {
+                  location.href ="<?=getenv('app.baseURL')?>" + "blacklist/" + resp.id + "/enable";
+                }
               break;
             }
           }
