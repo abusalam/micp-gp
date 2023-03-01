@@ -6,7 +6,7 @@ use App\Controllers\BaseController;
 use CodeIgniter\Test\Fabricator;
 use App\Models\BlacklistModel;
 use App\Entities\Blacklist;
-use FPDF;
+use App\PDF;
 
 class BlacklistController extends BaseController
 {
@@ -132,5 +132,31 @@ class BlacklistController extends BaseController
 								$parser->setData($data)
 								->renderString(lang('app.blacklist.removeSuccess'))
 							);
+  }
+
+
+  public function blacklist()
+  {
+    $blacklist = model('BlacklistModel')->asArray()
+                      ->select('blacklist_no,reason,created_at')
+                      ->where("status", 'enabled')
+                      ->findAll();
+    if (! $blacklist)
+    {
+      return redirect()->to(base_url(route_to('list-answers')))->with('error', lang('app.answer.notFound'));
+    }
+
+    $pdf = new PDF();	
+    // Header
+    $header['col_names'] = array('S/N','Vehicle/DL No', 'Date', 'Reason');
+    $header['col_widths'] = array(10, 35, 30, 0);
+    
+    $pdf->SetFont('Arial','B',20);
+    $pdf->Cell(0,10,'LIST OF BLACKLISTED VEHICLE OR DRIVER',0,1,'C');
+
+    $pdf->FancyTable($header, $blacklist);
+
+    $this->response->setHeader('Content-Type', 'application/pdf');
+    $pdf->Output();
   }
 }

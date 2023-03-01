@@ -110,7 +110,7 @@ if (session('has_no_profile')) {
       function($routes) {
         
         // List of All Blacklists
-        $routes->get('', 'BlacklistController::index', [
+        $routes->get('', 'BlacklistController::blacklist', [
           'as' => 'view-blacklists',
           ]);
     
