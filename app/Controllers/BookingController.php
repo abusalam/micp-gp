@@ -7,7 +7,7 @@ use App\Controllers\BaseController;
 use App\Models\BookingModel;
 use App\Entities\Booking;
 use GuzzleHttp\Client;
-use FPDF;
+use App\PDF;
 
 class BookingController extends BaseController
 {
@@ -139,8 +139,7 @@ class BookingController extends BaseController
       return redirect()->to(base_url(route_to('create-booking')))
           ->with('error', lang('app.assignment.notFound'));
     }
-    $pdf = new FPDF();		
-    $pdf->AddPage();
+    $pdf = new PDF();		
     for ($i=0;$i<=1;$i++)
     {
       $pdf->SetFont('Arial','B',20);
@@ -195,16 +194,20 @@ class BookingController extends BaseController
       $pdf->Cell(10,5,'',0,0);
       $pdf->Cell(5,5, chr(187),0,0);
       $pdf->SetFont('Arial','',10);
-      $pdf->MultiCell(180,5, lang('app.booking.createHelp'),0,1);
+      $parser    = \Config\Services::parser();
+      $pdf->MultiCell(180,5, $parser->setData(['validity' => getenv('PASS_VALIDITY')])
+      ->renderString(lang('app.booking.createHelp')),0,1);
       $EndAddrY = $pdf->GetY();
       $EndAddrX = $pdf->GetX();
   
       $pdf->SetXY($AddrX+33,$AddrY+3);
       //$pdf->Cell(30,30,'Photograph',1,0,'C');
-      $pdf->Image('data://text/plain;base64,' . $bookingOrder->getBase64ImageData('driver_photo'), null,null,30,30,'png');
+      // $pdf->Image('data://text/plain;base64,' . $bookingOrder->getBase64ImageData('driver_photo'), null,null,30,30,'png');
+      $pdf->Image($bookingOrder->getImageData('driver_photo'), null,null,30,30,'data');
       $pdf->SetXY($AddrX+128,$AddrY+3);
       //$pdf->Cell(30,30,'Photograph',1,1,'C');
-      $pdf->Image('data://text/plain;base64,' . $bookingOrder->getBase64ImageData('crew_photo'), null,null,30,30,'png');
+      // $pdf->Image('data://text/plain;base64,' . $bookingOrder->getBase64ImageData('crew_photo'), null,null,30,30,'png');
+      $pdf->Image($bookingOrder->getImageData('crew_photo'), null,null,30,30,'data');
       $pdf->SetXY($EndAddrX,$EndAddrY);
       if(!$i){
         $pdf->Cell(0,10,'',0,1,'C');

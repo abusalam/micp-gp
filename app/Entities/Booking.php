@@ -17,6 +17,13 @@ class Booking extends Entity
 		return $base64Data;
 	}
 
+	public function getImageData($attr_name)
+	{
+		list($format, $base64Data) = explode(';', $this->attributes[$attr_name]);
+		list(, $base64Data) = explode(',', $base64Data);
+		return base64_decode($base64Data);
+	}
+
 	public function getPassNo()
 	{
 		return $this->attributes['id'] ?? '';
@@ -85,7 +92,7 @@ class Booking extends Entity
 	public function setPassValidity()
 	{
 		$this->attributes['issued_on'] = date('Y-m-d', time());
-		$this->attributes['valid_till'] = date('Y-m-d', strtotime(getenv("PASS_VALIDITY","+30 days")));
+		$this->attributes['valid_till'] = date('Y-m-d', strtotime(getenv('PASS_VALIDITY')));
 	}
 
 }

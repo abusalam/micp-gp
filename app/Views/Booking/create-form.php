@@ -32,8 +32,11 @@
           <div class="card-body">
 
             <?= view('Myth\Auth\Views\_message_block') ?>
-
-            <p><?=lang('app.booking.createHelp')?></p>
+            <?php $parser    = \Config\Services::parser(); ?>
+            <p>
+              <?=$parser->setData(['validity' => getenv('PASS_VALIDITY')])
+                    ->renderString(lang('app.booking.createHelp'))?>
+            </p>
 
             <?= form_open_multipart(base_url(route_to('create-booking'))) ?>
 
@@ -296,14 +299,14 @@
         }
 
         if (target.matches("#saveGatePass")) {
-          const driverDataUrl = driverCanvas.toDataURL();
+          const driverDataUrl = driverCanvas.toDataURL('image/jpeg');
           const isValidDriverImage = /^data:image\/(png|jpeg|gif);base64,/.test(driverDataUrl);
 
           if (!isValidDriverImage) {
             alert("Error: Driver photo not captured!");
             event.preventDefault();
           }
-          const crewDataUrl = crewCanvas.toDataURL();
+          const crewDataUrl = crewCanvas.toDataURL('image/jpeg');
           const isValidCrewImage = /^data:image\/(png|jpeg|gif);base64,/.test(crewDataUrl);
 
           if (!isValidCrewImage) {

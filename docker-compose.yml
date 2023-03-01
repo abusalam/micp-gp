@@ -70,7 +70,17 @@ services:
 ## Alternative for macOS users: Mutagen https://wodby.com/docs/stacks/php/local#docker-for-mac
 #    - backend:/var/www/html
     labels:
-    - "traefik.http.routers.${PROJECT_NAME}_nginx.rule=Host(`${PROJECT_BASE_URL}`)"
+    # - "traefik.http.routers.${PROJECT_NAME}_nginx.rule=Host(`${PROJECT_BASE_URL}`)"
+    # - "traefik.http.middlewares.${PROJECT_NAME}_nginx_https.redirectscheme.scheme=https"
+    # - "traefik.http.middlewares.${PROJECT_NAME}_nginx_https.redirectscheme.permanent=true"
+    # - "traefik.http.middlewares.${PROJECT_NAME}_nginx_https.redirectscheme.port=443"
+    - "traefik.http.routers.${PROJECT_NAME}_nginx_https.rule=Host(`${PROJECT_BASE_URL}`)"
+    - "traefik.http.routers.${PROJECT_NAME}_nginx_https.tls=true"
+    - "traefik.http.routers.${PROJECT_NAME}_nginx_https.entrypoints=websecure"
+
+      # - traefik.http.routers.${PROJECT_NAME}_apache.entrypoints=web
+      # - traefik.http.routers.${PROJECT_NAME}_apache.rule=Host(`${PROJECT_BASE_URL}`)
+      # - traefik.http.routers.${PROJECT_NAME}_apache.middlewares=${PROJECT_NAME}_apache_https@docker
 
 #  apache:
 #    image: wodby/apache:$APACHE_TAG
@@ -245,12 +255,20 @@ services:
   traefik:
     image: traefik:v2.0
     container_name: "${PROJECT_NAME}_traefik"
-    command: --api.insecure=true --providers.docker
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # - --providers.file.directory=/etc/traefik/dynamic_conf
     ports:
     - '80:80'
+    - '443:443'
     - '8080:8080' # Dashboard
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
+    # - ./ssl/certs:/tools/certs
+    # - ./ssl/traefik/config.yml:/etc/traefik/dynamic_conf/conf.yml:ro
 
 #x-mutagen:
 #  sync:

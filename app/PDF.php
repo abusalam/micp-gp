@@ -88,4 +88,22 @@ class PDF extends FPDF
     $this->Cell(0,15,'Date: '. date('d/m/Y h:iA', time()),0,0,'L');
     $this->Cell(0,15,'Page '.$this->PageNo().'/{nb}',0,0,'R');
   }
+
+  protected function _parsedata($file)
+  {
+      // Extract info from a JPEG file
+      $a = getimagesizefromstring($file);
+      if(!$a)
+          $this->Error('Missing or incorrect image file: '.$file);
+      if($a[2]!=2)
+          $this->Error('Not a JPEG file: '.$file);
+      if(!isset($a['channels']) || $a['channels']==3)
+          $colspace = 'DeviceRGB';
+      elseif($a['channels']==4)
+          $colspace = 'DeviceCMYK';
+      else
+          $colspace = 'DeviceGray';
+      $bpc = isset($a['bits']) ? $a['bits'] : 8;
+      return array('w'=>$a[0], 'h'=>$a[1], 'cs'=>$colspace, 'bpc'=>$bpc, 'f'=>'DCTDecode', 'data'=>$file);
+  }
 }
