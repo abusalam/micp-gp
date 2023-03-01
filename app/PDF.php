@@ -85,6 +85,7 @@ class PDF extends FPDF
     $this->SetFont('Arial','I',8);
     $this->SetTextColor(0);
     // Page number
-    $this->Cell(0,15,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+    $this->Cell(0,15,'Date: '. date('d/m/Y h:iA', time()),0,0,'L');
+    $this->Cell(0,15,'Page '.$this->PageNo().'/{nb}',0,0,'R');
   }
 }
