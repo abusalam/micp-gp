@@ -192,7 +192,7 @@ class BookingModel extends Model
 		'driver_address' => 'required|string|max_length[255]',
 		'purpose'        => 'string|max_length[255]',
 		'crew_name'      => 'string|max_length[100]',
-		'crew_mobile'    => 'integer|is_natural_no_zero|exact_length[10]',
+		'crew_mobile'    => 'integer|permit_empty|is_natural_no_zero|exact_length[10]',
 		'crew_address'   => 'string|max_length[255]',
 	];
 

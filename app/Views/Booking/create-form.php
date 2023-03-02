@@ -298,24 +298,37 @@
           }
         }
 
+        // returns true if every pixel's uint32 representation is 0 (or "blank")
+        function isCanvasBlank(canvas) {
+          const context = canvas.getContext('2d');
+
+          const pixelBuffer = new Uint32Array(
+            context.getImageData(0, 0, canvas.width, canvas.height).data.buffer
+          );
+
+          return !pixelBuffer.some(color => color !== 0);
+        }
+
         if (target.matches("#saveGatePass")) {
           const driverDataUrl = driverCanvas.toDataURL('image/jpeg');
-          const isValidDriverImage = /^data:image\/(png|jpeg|gif);base64,/.test(driverDataUrl);
-
-          if (!isValidDriverImage) {
+  
+          if (isCanvasBlank(driverCanvas)) {
             alert("Error: Driver photo not captured!");
             event.preventDefault();
+          } else {
+            driverCanvasData.value = driverDataUrl;
           }
           const crewDataUrl = crewCanvas.toDataURL('image/jpeg');
-          const isValidCrewImage = /^data:image\/(png|jpeg|gif);base64,/.test(crewDataUrl);
 
-          if (!isValidCrewImage) {
-            alert("Error: Crew photo not captured!");
-            event.preventDefault();
+          if(!$('#crew_mobile').val() == '') {
+            if (isCanvasBlank(crewCanvas)) {
+              alert("Error: Crew photo not captured!");
+              event.preventDefault();
+            } else {
+              crewCanvasData.value = crewDataUrl;
+            }
           }
-
-          driverCanvasData.value = driverDataUrl;
-          crewCanvasData.value = crewDataUrl;
+          
         }
 
       };

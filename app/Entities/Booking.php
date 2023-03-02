@@ -74,6 +74,11 @@ class Booking extends Entity
 		return $this->attributes['crew_name'] ?? '';
 	}
 
+	public function getCrewMobile()
+	{
+		return $this->attributes['crew_mobile'] ?? '';
+	}
+
 	public function getCrewAddress()
 	{
 		return $this->attributes['crew_address'] ?? '';

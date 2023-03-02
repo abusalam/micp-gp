@@ -16,20 +16,22 @@ class BlacklistController extends BaseController
     $blacklistModel = model('BlacklistModel');
 
     $blacklists = $blacklistModel->asArray()
-      ->select('id,blacklist_no,reason')
+      ->select('id,blacklist_no,created_at,reason')
       ->where('status','enabled')
-      ->orderBy('updated_at', 'DESC')
-      ->paginate();
+      ->orderBy('id', 'ASC')
+      ->findAll();
 
     //dd($blacklists);
     // Define the Table Heading
     $_SESSION['heads'] = [
-      'id'           => 'ID#',
+      'id'           => 'SN#',
       'blacklist_no' => lang('app.blacklist.blacklist'),
+      'created_at'   => 'Date',
       'reason'       => lang('app.blacklist.reasonTitle'),
     ];
 
     $data = [
+      'title' => lang('app.blacklist.blacklistTitle'),
       'heads' => $_SESSION['heads'],
       'rows'  => $blacklists,
       'pager' => $blacklistModel->pager,
@@ -39,7 +41,7 @@ class BlacklistController extends BaseController
 
     $data['config'] = $this->config;
 
-    return view('Blacklist/list-form', $data);
+    return view('Blacklist/blacklist-report', $data);
   }
 
   public function showBlacklistForm()

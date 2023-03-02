@@ -75,7 +75,7 @@ if (session('has_no_profile')) {
       $routes->post('(:num)/webhook', 'BookingController::webhook/$1', [
         'as' => 'webhook',
         ]);
-      $routes->get('(:num)/print', 'BookingController::printReceipt/$1', [
+      $routes->get('(:num)/print', 'BookingController::printGatePass/$1', [
         'as' => 'print',
         ]);
       $routes->get('check', 'BookingController::getBookingSlot', [
@@ -89,6 +89,10 @@ if (session('has_no_profile')) {
         ]);
       $routes->post('reports', 'BookingController::getBookingsByRef', [
         'as' => 'reports',
+        ]);
+
+      $routes->get('daily', 'BookingController::getDailyReport', [
+        'as' => 'daily-report',
         ]);
 
       $routes->post('driver', 'BookingController::getDriverDetails', [
@@ -110,6 +114,11 @@ if (session('has_no_profile')) {
       function($routes) {
         
         // List of All Blacklists
+        $routes->get('report', 'BlacklistController::index', [
+          'as' => 'blacklist-report',
+          ]);
+
+        // List of All Blacklists in PDF
         $routes->get('', 'BlacklistController::blacklist', [
           'as' => 'view-blacklists',
           ]);

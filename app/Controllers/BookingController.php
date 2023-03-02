@@ -95,7 +95,45 @@ class BookingController extends BaseController
 
     return view('Booking/list-form', $data);
   }
+  public function getDailyReport()
+  {
+    helper('inflector');
+    $bookingModel = model('BookingModel');
 
+    $bookings = $bookingModel->asArray()
+      ->select('`id`,`vehicle_no`,`license_no`,`driver_name`,`driver_mobile`,`crew_name`,`crew_mobile`')
+      ->where('issued_on', date('Y-m-d', time()))
+      ->orderBy('vehicle_no', 'ASC')
+      ->findAll();
+
+    //dd($bookings);
+    // Define the Table Heading
+    $_SESSION['heads'] = [
+      'id'            => 'ID#',
+      'vehicle_no'    => 'Truck#',
+      'license_no'    => 'DL#',
+      'driver_name'   => 'Driver',
+      'driver_mobile' => 'Mobile',
+      'crew_name'     => 'Crew',
+      'crew_mobile'   => 'Mobile',
+    ];
+    $parser    = \Config\Services::parser();
+
+    $dailyReportTitle = $parser->setData(['date' => date('d/m/Y', time())])
+            ->renderString(lang('app.booking.dailyReportTitle'));
+    $data = [
+      'title' => $dailyReportTitle,
+      'heads' => $_SESSION['heads'],
+      'rows'  => $bookings,
+      'pager' => $bookingModel->pager,
+    ];
+
+    unset($_SESSION['heads']);
+
+    $data['config'] = $this->config;
+
+    return view('Booking/daily-report', $data);
+  }
 
   public function createBooking()
   {
@@ -131,7 +169,7 @@ class BookingController extends BaseController
   }
 
   
-  public function printReceipt(int $id)
+  public function printGatePass(int $id)
   {
     $bookingOrder = model('BookingModel')->find($id);
     if (! $bookingOrder)
@@ -207,7 +245,12 @@ class BookingController extends BaseController
       $pdf->SetXY($AddrX+128,$AddrY+3);
       //$pdf->Cell(30,30,'Photograph',1,1,'C');
       // $pdf->Image('data://text/plain;base64,' . $bookingOrder->getBase64ImageData('crew_photo'), null,null,30,30,'png');
-      $pdf->Image($bookingOrder->getImageData('crew_photo'), null,null,30,30,'data');
+      if($bookingOrder->getCrewMobile())
+      {
+        $pdf->Image($bookingOrder->getImageData('crew_photo'), null,null,30,30,'data');
+      } else {
+        $pdf->Cell(30,30,'',1,1,'C');
+      }
       $pdf->SetXY($EndAddrX,$EndAddrY);
       if(!$i){
         $pdf->Cell(0,10,'',0,1,'C');

@@ -39,7 +39,7 @@
                 </div>
                 <pre id="debug"><?php //var_dump($blacklist ?? '')?></pre>
                 <button type="submit" class="btn btn-danger" id="saveBlacklist" name="action"><?=lang('app.blacklist.btnAddTitle')?></button>
-                <a href="<?=base_url(route_to('view-blacklists'))?>" target="_blank" class="btn btn-primary"><?=lang('app.blacklist.btnListTitle')?></a>
+                <a href="<?=base_url(route_to('blacklist-report'))?>" target="_blank" class="btn btn-primary"><?=lang('app.blacklist.btnListTitle')?></a>
               </fieldset>
             <?=form_close()?>
 
