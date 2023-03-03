@@ -42,13 +42,13 @@
 			</span>
 			<?=lang('app.menu.booking')?>
 		</a>
-		<a href="<?= base_url(route_to('daily-report'))?>"  target="_blank"
+		<!-- <a href="<?= base_url(route_to('daily-report'))?>"  target="_blank"
 			class="sidebar-link sidebar-link-with-icon <?= add_class('daily-report')?>">
 			<span class="sidebar-icon">
 				<i class="fa fa-print" aria-hidden="true"></i>
 			</span>
 			<?=lang('app.booking.dailyReport')?>
-		</a>
+		</a> -->
 		<a href="<?= base_url(route_to('create-blacklist'))?>"
 			class="sidebar-link sidebar-link-with-icon <?= add_class('create-blacklist')?>">
 			<span class="sidebar-icon">
@@ -56,13 +56,13 @@
 			</span>
 			<?=lang('app.menu.blacklist')?>
 		</a>
-		<a href="<?= base_url(route_to('blacklist-report'))?>"  target="_blank"
+		<!-- <a href="<?= base_url(route_to('blacklist-report'))?>"  target="_blank"
 			class="sidebar-link sidebar-link-with-icon <?= add_class('blacklist-report')?>">
 			<span class="sidebar-icon">
 				<i class="fa fa-print" aria-hidden="true"></i>
 			</span>
 			<?=lang('app.booking.blacklistReport')?>
-		</a>
+		</a> -->
 
 		<a href="<?= base_url(route_to('reports'))?>"
 			class="sidebar-link sidebar-link-with-icon <?= add_class('reports')?>">

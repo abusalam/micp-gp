@@ -39,6 +39,7 @@ class BlacklistController extends BaseController
 
     unset($_SESSION['heads']);
 
+    $this->config->viewLayout=getenv('auth.reportLayout');
     $data['config'] = $this->config;
 
     return view('Blacklist/blacklist-report', $data);

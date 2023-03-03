@@ -84,10 +84,10 @@ if (session('has_no_profile')) {
       $routes->post('check', 'BookingController::getBookingsByDate', [
         'as' => 'check',
         ]);
-      $routes->get('reports', 'BookingController::showTicketSearch', [
+      $routes->get('reports', 'BookingController::showReportForm', [
         'as' => 'reports',
         ]);
-      $routes->post('reports', 'BookingController::getBookingsByRef', [
+      $routes->post('reports', 'BookingController::getBookingsByDate', [
         'as' => 'reports',
         ]);
 

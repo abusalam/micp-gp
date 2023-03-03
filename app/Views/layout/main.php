@@ -22,7 +22,9 @@
 		<link rel="stylesheet" type="text/css" href="<?=base_url('/css/jquery-ui.min.css')?>">
 		<script src="<?=base_url('/js/jquery-1.12.4.min.js')?>"></script>
 		<script src="<?=base_url('/js/jquery-ui.min.js')?>"></script>
-
+		<script type="text/javascript" src="<?=base_url('/js/moment.min.js')?>"></script>
+		<script type="text/javascript" src="<?=base_url('/js/daterangepicker.min.js')?>"></script>
+		<link rel="stylesheet" type="text/css" href="<?=base_url('/css/daterangepicker.css')?>" />
 		<style {csp-script-nonce}>
 			.img-edit {
 				position: relative;

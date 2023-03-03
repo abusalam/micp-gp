@@ -1,4 +1,4 @@
-<?= $this->extend('App\Views\layout\report') ?>
+<?= $this->extend($config->viewLayout) ?>
 <?= $this->section('main') ?>
   <h2>
     <?=$title ?? 'Report'?>

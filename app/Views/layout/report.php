@@ -22,14 +22,6 @@
 		<link rel="stylesheet" type="text/css" href="<?=base_url('/css/jquery-ui.min.css')?>">
 		<script src="<?=base_url('/js/jquery-1.12.4.min.js')?>"></script>
 		<script src="<?=base_url('/js/jquery-ui.min.js')?>"></script>
-
-		<style {csp-script-nonce}>
-			.img-edit {
-				position: relative;
-				top: 0.5rem;
-				right: 0.5rem;
-			}
-		</style>
 	</head>
 	<body>
 		<!--

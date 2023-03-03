@@ -8,6 +8,7 @@ use App\Models\BookingModel;
 use App\Entities\Booking;
 use GuzzleHttp\Client;
 use App\PDF;
+use CodeIgniter\Database\RawSql;
 
 class BookingController extends BaseController
 {
@@ -129,7 +130,7 @@ class BookingController extends BaseController
     ];
 
     unset($_SESSION['heads']);
-
+    $this->config->viewLayout=getenv('auth.reportLayout');
     $data['config'] = $this->config;
 
     return view('Booking/daily-report', $data);
@@ -296,26 +297,45 @@ class BookingController extends BaseController
     echo json_encode($bookings);
   }
 
-  public function showTicketSearch()
+  public function showReportForm()
   {
     $data['config'] = $this->config;
-    return view('Booking/search-form', $data);
+    return view('Booking/report-form', $data);
   }
 
-  public function getBookingsByRef()
+  public function getBookingsByDate()
   {
     $bookingModel = new BookingModel();
-    
-    $booking = $bookingModel->where('ticket', $this->request->getPost('ticket'))
-    ->where('status', 'SUCCESS')
-    ->first();
-    $data['booking'] = $booking;
-    //$data['csrf_token'] = $this->security->get_csrf_hash();
-    //$this->response->setHeader('Content-Type', 'application/json');
-    //echo json_encode($data);
-    $data['config'] = $this->config;
-    
-    return view('Booking/search-form', $data);
+    $bookings = $bookingModel->asArray()
+        ->select('`id`,`issued_on`,`vehicle_no`,`license_no`,`driver_name`,`driver_mobile`,`crew_name`,`crew_mobile`')
+        ->where('issued_on >=', $this->request->getPost('dateFrom'))
+        ->Where('issued_on <=', $this->request->getPost('dateTo'))
+        ->findAll();
+
+    $_SESSION['heads'] = [
+      'id'            => 'ID#',
+      'issued_on'     => 'Issued On',
+      'vehicle_no'    => 'Truck#',
+      'license_no'    => 'DL#',
+      'driver_name'   => 'Driver',
+      'driver_mobile' => 'Mobile',
+      'crew_name'     => 'Crew',
+      'crew_mobile'   => 'Mobile',
+    ];
+    $parser    = \Config\Services::parser();
+
+    $dailyReportTitle = $parser->setData(['date' => $this->request->getPost('date')])
+            ->renderString(lang('app.booking.dailyReportTitle'));
+    $this->config->viewLayout=getenv('auth.reportLayout');
+    $data = [
+      'config'=>$this->config,
+      'title' => $dailyReportTitle,
+      'heads' => $_SESSION['heads'],
+      'rows'  => $bookings,
+    ];
+
+    unset($_SESSION['heads']);
+    return view('Booking/daily-report', $data);
   }
 
 }
