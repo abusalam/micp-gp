@@ -216,7 +216,7 @@ class BookingController extends BaseController
       // For Multicell for right column
       $MultiCellAddrY = $pdf->GetY();
       $pdf->Cell(95,0,'' . $bookingOrder->getDOB(),0,0);
-      $pdf->MultiCell(0,$lineHeight,'4. Address of Crew: ' . $bookingOrder->getDriverName(),'T',1);
+      $pdf->MultiCell(0,$lineHeight,'4. Address of Crew: ' . $bookingOrder->getCrewAddress(),'T',1);
 
       // Pull up to overwrite DOB Cell on left column
       $pdf->SetY($MultiCellAddrY);
